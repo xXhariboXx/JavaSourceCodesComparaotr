@@ -1,5 +1,10 @@
 package pl.polsl.javasourcecodescomparator.model;
 
+import com.sun.org.apache.bcel.internal.classfile.SourceFile;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Dominik
@@ -9,9 +14,58 @@ package pl.polsl.javasourcecodescomparator.model;
 
 public class SourceComparator {
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Class private fields
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * All java source files to compare
+     */
+    private List<SourceCodeFile> SourceFilesToCompareList;
+
+    private List<ResultData> ResultDataList;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Getters and setters
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public List<SourceCodeFile> getSourceFilesToCompareList() {
+        return SourceFilesToCompareList;
+    }
+    public void setSourceFilesToCompareList(List<SourceCodeFile> SourceFilesToCompareList) {
+        SourceFilesToCompareList = SourceFilesToCompareList;
+    }
 
 
-    public void compareArchive(String archivePath){
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Constructors
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public SourceComparator(){
+        SourceFilesToCompareList = new ArrayList<>();
+        ResultDataList = new ArrayList<>();
+    }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Public methods
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public void compareAllFiles(String archivePath){
+        for(SourceCodeFile sourceFile : SourceFilesToCompareList){
+            compareFileWithOthers(sourceFile);
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Private methods
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    private void compareFileWithOthers(SourceCodeFile originSourceCodeFile){
+        for(SourceCodeFile sourceFile : SourceFilesToCompareList){
+            if(sourceFile.getAuthor() != originSourceCodeFile.getAuthor()){
+                compareCodeFiles(originSourceCodeFile, sourceFile);
+            }
+        }
+    }
+
+    private void compareCodeFiles(SourceCodeFile originSource, SourceCodeFile sourceToCompare){
+        for(String line : originSource.getSourceLinesList()){
+
+        }
     }
 }

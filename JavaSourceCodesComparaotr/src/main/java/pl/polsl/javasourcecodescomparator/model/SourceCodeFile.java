@@ -46,6 +46,10 @@ public class SourceCodeFile {
      */
     private List<String> SourceLinesList;
     /**
+     * Pure source code - only code lines
+     */
+    private List<String> PureSourceLinesList;
+    /**
      * Number of lines in source file
      */
     private int LinesNumber;
@@ -83,6 +87,12 @@ public class SourceCodeFile {
     public void setSourceLinesList(List<String> sourceLinesList) {
         SourceLinesList = sourceLinesList;
     }
+    public List<String> getPureSourceLinesList() {
+        return PureSourceLinesList;
+    }
+    public void setPureSourceLinesList(List<String> pureSourceLinesList) {
+        PureSourceLinesList = pureSourceLinesList;
+    }
     public int getLinesNumber() {
         return LinesNumber;
     }
@@ -98,6 +108,7 @@ public class SourceCodeFile {
      */
     public SourceCodeFile(){
         SourceLinesList = new ArrayList<>();
+        PureSourceLinesList = new ArrayList<>();
         LinesNumber = SourceLinesList.size();
     }
 
@@ -106,11 +117,15 @@ public class SourceCodeFile {
      * @param listToInitialize source file content
      */
     public SourceCodeFile(List<String> listToInitialize){
+        SourceLinesList = new ArrayList<>(listToInitialize);
+        PureSourceLinesList = new ArrayList<>();
+
         for(String sourceLine : listToInitialize) {
             parseInfo(sourceLine);
         }
-        SourceLinesList.addAll(listToInitialize);
+
         LinesNumber = SourceLinesList.size();
+        extractPureSource();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -124,6 +139,20 @@ public class SourceCodeFile {
         parseInfo(sourceLine);
         SourceLinesList.add(sourceLine);
         LinesNumber = SourceLinesList.size();
+    }
+
+    public void extractPureSource(){
+        for(String line : SourceLinesList){
+            line = line.replaceAll("   ", "");
+            while(line.startsWith(" ")){
+                line = line.substring(1);
+            }
+            if(!line.startsWith("/*") && !line.startsWith("*")
+                    && !line.startsWith("*/") && !line.startsWith("/")
+                    && (line.length() != 0) && !line.startsWith("@")){
+                PureSourceLinesList.add(line);
+            }
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

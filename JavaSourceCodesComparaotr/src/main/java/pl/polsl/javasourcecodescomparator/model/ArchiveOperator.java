@@ -108,6 +108,7 @@ public class ArchiveOperator {
 
         sourceFile.setProjectName(projectName);
         sourceFile.setSourceFileName(sourceFileName);
+        sourceFile.extractPureSource();
 
         SourceFiles.add(sourceFile);
     }
