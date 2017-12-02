@@ -30,8 +30,8 @@ public class SourceComparator {
     public List<SourceCodeFile> getSourceFilesToCompareList() {
         return SourceFilesToCompareList;
     }
-    public void setSourceFilesToCompareList(List<SourceCodeFile> SourceFilesToCompareList) {
-        SourceFilesToCompareList = SourceFilesToCompareList;
+    public void setSourceFilesToCompareList(List<SourceCodeFile> sourceFilesToCompareList) {
+        this.SourceFilesToCompareList = sourceFilesToCompareList;
     }
 
 
@@ -46,10 +46,36 @@ public class SourceComparator {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Public methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public void compareAllFiles(String archivePath){
+    public void compareAllFiles(){
         for(SourceCodeFile sourceFile : SourceFilesToCompareList){
             compareFileWithOthers(sourceFile);
         }
+    }
+
+    public void findLongestCommonParts(){
+        for(ResultData resultData : ResultDataList){
+            resultData.findLongestCommonParts();
+        }
+    }
+
+    public String getTotalResultString() {
+        String result = "";
+
+        for(ResultData resultData : ResultDataList){
+            result += resultData.toString() + "\n";
+        }
+
+        return result;
+    }
+
+    public String getLongestCommonPartsString(){
+        String result = "";
+
+        for(ResultData resultData : ResultDataList){
+            result += resultData.longestCommonPartsToString() + "\n";
+        }
+
+        return result;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,15 +83,31 @@ public class SourceComparator {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private void compareFileWithOthers(SourceCodeFile originSourceCodeFile){
         for(SourceCodeFile sourceFile : SourceFilesToCompareList){
-            if(sourceFile.getAuthor() != originSourceCodeFile.getAuthor()){
-                compareCodeFiles(originSourceCodeFile, sourceFile);
-            }
+            ResultData resultData = new ResultData();
+            resultData.OriginSource = originSourceCodeFile.getSourceFileName();
+            //if(sourceFile.getAuthor() != originSourceCodeFile.getAuthor()){
+                resultData.SimilarSourcesList.add(sourceFile.getSourceFileName());
+                resultData.MatchingLinesMap.put(sourceFile.getSourceFileName(), compareCodeFiles(originSourceCodeFile, sourceFile));
+                ResultDataList.add(resultData);
+            //}
         }
     }
 
-    private void compareCodeFiles(SourceCodeFile originSource, SourceCodeFile sourceToCompare){
-        for(String line : originSource.getSourceLinesList()){
+    private List<MatchedLine> compareCodeFiles(SourceCodeFile originSource, SourceCodeFile sourceToCompare){
+        List<MatchedLine> resultList = new ArrayList<>();
 
+        int i = 0;
+        for(String originLine : originSource.getSourceLinesList()){
+            i++;
+            int j = 0;
+            for(String lineToCompare : sourceToCompare.getSourceLinesList()){
+                j++;
+                if(originLine.equals(lineToCompare)){
+                    resultList.add(new MatchedLine(i, j, originLine));
+                }
+            }
         }
+
+        return  resultList;
     }
 }

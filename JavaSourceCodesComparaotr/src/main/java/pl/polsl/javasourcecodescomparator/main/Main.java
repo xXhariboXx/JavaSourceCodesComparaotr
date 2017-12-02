@@ -13,6 +13,7 @@ package pl.polsl.javasourcecodescomparator.main;
 
 import pl.polsl.javasourcecodescomparator.model.ArchiveOperator;
 import pl.polsl.javasourcecodescomparator.model.SourceCodeFile;
+import pl.polsl.javasourcecodescomparator.model.SourceComparator;
 
 
 public class Main {
@@ -32,11 +33,16 @@ public class Main {
 //        });
 
         ArchiveOperator operator = new ArchiveOperator();
+        SourceComparator comparator = new SourceComparator();
         try {
             operator.readArchive("F:/TestFolder");
             for(SourceCodeFile file : operator.getSourceFiles()){
-                System.out.println(file.toString());
+               // System.out.println(file.toString());
             }
+            comparator.setSourceFilesToCompareList(operator.getSourceFiles());
+            comparator.compareAllFiles();
+            comparator.findLongestCommonParts();
+            System.out.println(comparator.getLongestCommonPartsString());
         } catch (Exception e) {
             e.getMessage();
         }
