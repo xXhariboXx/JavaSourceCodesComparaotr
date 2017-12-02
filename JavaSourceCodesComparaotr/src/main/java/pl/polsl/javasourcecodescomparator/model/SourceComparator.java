@@ -54,6 +54,7 @@ public class SourceComparator {
 
     public void findLongestCommonParts(){
         for(ResultData resultData : ResultDataList){
+            resultData.clearGarbageResults();
             resultData.findLongestCommonParts();
         }
     }

@@ -16,6 +16,8 @@ public class ResultData {
 
     public Map<String, List<MatchedLine>> LongestCommonPartsMap;
 
+    private int LongestLineLength;
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructors
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -23,6 +25,7 @@ public class ResultData {
         SimilarSourcesList = new ArrayList<>();
         MatchingLinesMap = new HashMap<>();
         LongestCommonPartsMap = new HashMap<>();
+        this.LongestLineLength = 0;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +47,12 @@ public class ResultData {
                     }
                     previousMatchedLine = matchedLine;
                 }
+
+                if(matchedLine.LineContent.length() > LongestLineLength){
+                    LongestLineLength = matchedLine.LineContent.length();
+                }
             }
+            
             LongestCommonPartsMap.put(similarSource, longestMatchedLines);
         }
     }
@@ -56,11 +64,18 @@ public class ResultData {
         for(String similarSource : LongestCommonPartsMap.keySet()){
             result += "Similar source name: " + similarSource + "\n";
             for(MatchedLine matchedLine : LongestCommonPartsMap.get(similarSource)){
+                matchedLine.LongestLineLength = LongestLineLength;
                 result += matchedLine.toString() + "\n";
             }
         }
 
         return result;
+    }
+
+    public void clearGarbageResults(){
+        for(Map.Entry<String, List<MatchedLine>> entry : MatchingLinesMap.entrySet()){
+            entry.setValue(clearGarbageResultsFromSourceFile(entry.getValue()));
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -79,5 +94,24 @@ public class ResultData {
         }
 
         return result;
+    }
+
+    private List<MatchedLine> clearGarbageResultsFromSourceFile(List<MatchedLine> matchedLines){
+        List<MatchedLine> nonGarbageLines = new ArrayList<>();
+        MatchedLine previousMatchedLine = new MatchedLine();
+
+        for(MatchedLine line : matchedLines){
+            if(previousMatchedLine.OriginLineNumber == -1) {
+                previousMatchedLine = line;
+            }
+
+            if((previousMatchedLine.OriginLineNumber == (line.OriginLineNumber - 1)) || !line.iSGarbage()) {
+                nonGarbageLines.add(line);
+            }
+
+            previousMatchedLine = line;
+        }
+
+        return nonGarbageLines;
     }
 }
