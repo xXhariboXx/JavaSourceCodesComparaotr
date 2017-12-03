@@ -55,7 +55,7 @@ public class ResultData {
             
             LongestCommonPartsMap.put(similarSource, longestMatchedLines);
         }
-    }
+}
 
     public String longestCommonPartsToString(){
         String result = "";
@@ -72,10 +72,32 @@ public class ResultData {
         return result;
     }
 
+    public void formatResultData(){
+        for(String similarSource : MatchingLinesMap.keySet()) {
+            for(MatchedLine matchedLine : MatchingLinesMap.get(similarSource)) {
+                if (matchedLine.LineContent.length() > LongestLineLength) {
+                    LongestLineLength = matchedLine.LineContent.length();
+                }
+            }
+        }
+    }
+
     public void clearGarbageResults(){
         for(Map.Entry<String, List<MatchedLine>> entry : MatchingLinesMap.entrySet()){
             entry.setValue(clearGarbageResultsFromSourceFile(entry.getValue()));
         }
+    }
+
+    public boolean haveMatchingLines(){
+        boolean bHaveMatchingLines = false;
+
+        for(Map.Entry<String, List<MatchedLine>> entry : MatchingLinesMap.entrySet()){
+            if(entry.getValue().size() > 0){
+                bHaveMatchingLines = true;
+            }
+        }
+
+        return bHaveMatchingLines;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,6 +111,7 @@ public class ResultData {
         for(String similarSource : MatchingLinesMap.keySet()){
             result += "Similar source name: " + similarSource + "\n";
             for(MatchedLine matchedLine : MatchingLinesMap.get(similarSource)){
+                matchedLine.LongestLineLength = LongestLineLength;
                 result += matchedLine.toString() + "\n";
             }
         }

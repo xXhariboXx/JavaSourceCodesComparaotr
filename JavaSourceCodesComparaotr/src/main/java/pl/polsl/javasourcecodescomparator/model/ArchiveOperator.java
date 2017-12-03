@@ -102,8 +102,10 @@ public class ArchiveOperator {
         SourceCodeFile sourceFile = new SourceCodeFile();
         String currentLine;
 
+        int lineIndex = 1;
         while ((currentLine = bufferedReader.readLine()) != null) {
-            sourceFile.addSourceLine(currentLine);
+            sourceFile.addSourceLine(new SourceLine(currentLine, lineIndex));
+            lineIndex++;
         }
 
         sourceFile.setProjectName(projectName);

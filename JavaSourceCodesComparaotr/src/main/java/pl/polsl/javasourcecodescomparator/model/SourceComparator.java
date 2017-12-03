@@ -50,12 +50,13 @@ public class SourceComparator {
         for(SourceCodeFile sourceFile : SourceFilesToCompareList){
             compareFileWithOthers(sourceFile);
         }
+        clearGarbage();
     }
 
     public void findLongestCommonParts(){
+        clearGarbage();
         for(ResultData resultData : ResultDataList){
-            resultData.clearGarbageResults();
-            resultData.findLongestCommonParts();
+            //resultData.findLongestCommonParts();
         }
     }
 
@@ -63,6 +64,7 @@ public class SourceComparator {
         String result = "";
 
         for(ResultData resultData : ResultDataList){
+            resultData.formatResultData();
             result += resultData.toString() + "\n";
         }
 
@@ -86,29 +88,53 @@ public class SourceComparator {
         for(SourceCodeFile sourceFile : SourceFilesToCompareList){
             ResultData resultData = new ResultData();
             resultData.OriginSource = originSourceCodeFile.getSourceFileName();
-            //if(sourceFile.getAuthor() != originSourceCodeFile.getAuthor()){
+            if(!areSourcesTheSame(originSourceCodeFile, sourceFile)){
                 resultData.SimilarSourcesList.add(sourceFile.getSourceFileName());
                 resultData.MatchingLinesMap.put(sourceFile.getSourceFileName(), compareCodeFiles(originSourceCodeFile, sourceFile));
                 ResultDataList.add(resultData);
-            //}
+            }
         }
+    }
+
+    private boolean areSourcesTheSame(SourceCodeFile originSourceCodeFile, SourceCodeFile sourceCodeFileToCompare){
+        return (originSourceCodeFile.getAuthor() == sourceCodeFileToCompare.getAuthor()) &&
+                (originSourceCodeFile.getVersion() == sourceCodeFileToCompare.getVersion()) &&
+                (originSourceCodeFile.getProjectName() == sourceCodeFileToCompare.getProjectName());
     }
 
     private List<MatchedLine> compareCodeFiles(SourceCodeFile originSource, SourceCodeFile sourceToCompare){
         List<MatchedLine> resultList = new ArrayList<>();
+        int lastMatchedIndex = -1;
 
-        int i = 0;
-        for(String originLine : originSource.getSourceLinesList()){
-            i++;
-            int j = 0;
-            for(String lineToCompare : sourceToCompare.getSourceLinesList()){
-                j++;
-                if(originLine.equals(lineToCompare)){
-                    resultList.add(new MatchedLine(i, j, originLine));
+        for(SourceLine originSourceLine : originSource.getSourceLinesList()){
+
+            for(SourceLine sourceLineToCompare : sourceToCompare.getSourceLinesList()){
+
+                if (!sourceLineToCompare.WasSourceLineMatched ) {
+                    if (originSourceLine.SourceLineContent.equals(sourceLineToCompare.SourceLineContent)) {
+                        //lastMatchedIndex = sourceLineToCompare.SourceLineIndex;
+                        sourceLineToCompare.WasSourceLineMatched = true;
+                        resultList.add(new MatchedLine(originSourceLine.SourceLineIndex, sourceLineToCompare.SourceLineIndex, originSourceLine.SourceLineContent));
+                        break;
+                    }
                 }
             }
         }
 
         return  resultList;
+    }
+
+    private void clearGarbage(){
+        ArrayList<ResultData> listToSave = new ArrayList<>();
+
+        for(ResultData resultData : ResultDataList){
+            resultData.clearGarbageResults();
+            if(resultData.haveMatchingLines()){
+                listToSave.add(resultData);
+            }
+        }
+
+        ResultDataList.clear();
+        ResultDataList.addAll(listToSave);
     }
 }

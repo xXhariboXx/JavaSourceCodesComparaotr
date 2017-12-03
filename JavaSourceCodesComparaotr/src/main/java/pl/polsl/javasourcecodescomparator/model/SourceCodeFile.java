@@ -44,11 +44,11 @@ public class SourceCodeFile {
     /**
      * Content of source file
      */
-    private List<String> SourceLinesList;
+    private List<SourceLine> SourceLinesList;
     /**
      * Pure source code - only code lines
      */
-    private List<String> PureSourceLinesList;
+    private List<SourceLine> PureSourceLinesList;
     /**
      * Number of lines in source file
      */
@@ -81,16 +81,16 @@ public class SourceCodeFile {
     public void setVersion(String version) {
         Version = version;
     }
-    public List<String> getSourceLinesList() {
+    public List<SourceLine> getSourceLinesList() {
         return SourceLinesList;
     }
-    public void setSourceLinesList(List<String> sourceLinesList) {
+    public void setSourceLinesList(List<SourceLine> sourceLinesList) {
         SourceLinesList = sourceLinesList;
     }
-    public List<String> getPureSourceLinesList() {
+    public List<SourceLine> getPureSourceLinesList() {
         return PureSourceLinesList;
     }
-    public void setPureSourceLinesList(List<String> pureSourceLinesList) {
+    public void setPureSourceLinesList(List<SourceLine> pureSourceLinesList) {
         PureSourceLinesList = pureSourceLinesList;
     }
     public int getLinesNumber() {
@@ -116,12 +116,12 @@ public class SourceCodeFile {
      * Constructor to initialize object with full source file
      * @param listToInitialize source file content
      */
-    public SourceCodeFile(List<String> listToInitialize){
+    public SourceCodeFile(List<SourceLine> listToInitialize){
         SourceLinesList = new ArrayList<>(listToInitialize);
         PureSourceLinesList = new ArrayList<>();
 
-        for(String sourceLine : listToInitialize) {
-            parseInfo(sourceLine);
+        for(SourceLine sourceLine : listToInitialize) {
+            parseInfo(sourceLine.SourceLineContent);
         }
 
         LinesNumber = SourceLinesList.size();
@@ -135,22 +135,23 @@ public class SourceCodeFile {
      * Adds and parses line of source code
      * @param sourceLine
      */
-    public void addSourceLine(String sourceLine){
-        parseInfo(sourceLine);
+    public void addSourceLine(SourceLine sourceLine){
+        parseInfo(sourceLine.SourceLineContent);
         SourceLinesList.add(sourceLine);
         LinesNumber = SourceLinesList.size();
     }
 
     public void extractPureSource(){
-        for(String line : SourceLinesList){
-            line = line.replaceAll("   ", "");
-            while(line.startsWith(" ")){
-                line = line.substring(1);
+        for(SourceLine sourceLine : SourceLinesList){
+            String lineContent = sourceLine.SourceLineContent;
+            lineContent = lineContent.replaceAll("   ", "");
+            while(lineContent.startsWith(" ")){
+                lineContent = lineContent.substring(1);
             }
-            if(!line.startsWith("/*") && !line.startsWith("*")
-                    && !line.startsWith("*/") && !line.startsWith("/")
-                    && (line.length() != 0) && !line.startsWith("@")){
-                PureSourceLinesList.add(line);
+            if(!lineContent.startsWith("/*") && !lineContent.startsWith("*")
+                    && !lineContent.startsWith("*/") && !lineContent.startsWith("/")
+                    && (lineContent.length() != 0) && !lineContent.startsWith("@")){
+                PureSourceLinesList.add(sourceLine);
             }
         }
     }
@@ -165,8 +166,8 @@ public class SourceCodeFile {
     @Override
     public String toString() {
         String result = "";
-        for(String line : SourceLinesList){
-            result += line + "\n";
+        for(SourceLine sourceLine : SourceLinesList){
+            result += sourceLine.SourceLineContent + "\n";
         }
 
         return result;

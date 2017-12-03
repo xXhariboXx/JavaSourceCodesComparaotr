@@ -41,8 +41,7 @@ public class Main {
             }
             comparator.setSourceFilesToCompareList(operator.getSourceFiles());
             comparator.compareAllFiles();
-            comparator.findLongestCommonParts();
-            System.out.println(comparator.getLongestCommonPartsString());
+            System.out.println(comparator.getTotalResultString());
         } catch (Exception e) {
             e.getMessage();
         }
