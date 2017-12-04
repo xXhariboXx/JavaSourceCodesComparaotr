@@ -8,13 +8,13 @@ import java.util.Map;
 
 public class ResultData {
 
-    public String OriginSource;
+    public SourceFileInfo OriginSource;
 
     public List<String> SimilarSourcesList;
 
-    public Map<String, List<MatchedLine>> MatchingLinesMap;
+    public Map<SourceFileInfo, List<MatchedLine>> MatchingLinesMap;
 
-    public Map<String, List<MatchedLine>> LongestCommonPartsMap;
+    public Map<SourceFileInfo, List<MatchedLine>> LongestCommonPartsMap;
 
     private int LongestLineLength;
 
@@ -32,7 +32,7 @@ public class ResultData {
     // Public methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public void findLongestCommonParts(){
-        for(String similarSource : MatchingLinesMap.keySet()){
+        for(SourceFileInfo similarSource : MatchingLinesMap.keySet()){
             MatchedLine previousMatchedLine = new MatchedLine();
             List<MatchedLine> longestMatchedLines = new ArrayList<>();
 
@@ -60,9 +60,9 @@ public class ResultData {
     public String longestCommonPartsToString(){
         String result = "";
 
-        result += "Origin source name: " + OriginSource + "\n";
-        for(String similarSource : LongestCommonPartsMap.keySet()){
-            result += "Similar source name: " + similarSource + "\n";
+        result += "Origin source:\n" + OriginSource.toString() + "\n";
+        for(SourceFileInfo similarSource : LongestCommonPartsMap.keySet()){
+            result += "Similar source:\n" + similarSource.toString() + "\n";
             for(MatchedLine matchedLine : LongestCommonPartsMap.get(similarSource)){
                 matchedLine.LongestLineLength = LongestLineLength;
                 result += matchedLine.toString() + "\n";
@@ -73,7 +73,7 @@ public class ResultData {
     }
 
     public void formatResultData(){
-        for(String similarSource : MatchingLinesMap.keySet()) {
+        for(SourceFileInfo similarSource : MatchingLinesMap.keySet()) {
             for(MatchedLine matchedLine : MatchingLinesMap.get(similarSource)) {
                 if (matchedLine.LineContent.length() > LongestLineLength) {
                     LongestLineLength = matchedLine.LineContent.length();
@@ -83,7 +83,7 @@ public class ResultData {
     }
 
     public void clearGarbageResults(){
-        for(Map.Entry<String, List<MatchedLine>> entry : MatchingLinesMap.entrySet()){
+        for(Map.Entry<SourceFileInfo, List<MatchedLine>> entry : MatchingLinesMap.entrySet()){
             entry.setValue(clearGarbageResultsFromSourceFile(entry.getValue()));
         }
     }
@@ -91,7 +91,7 @@ public class ResultData {
     public boolean haveMatchingLines(){
         boolean bHaveMatchingLines = false;
 
-        for(Map.Entry<String, List<MatchedLine>> entry : MatchingLinesMap.entrySet()){
+        for(Map.Entry<SourceFileInfo, List<MatchedLine>> entry : MatchingLinesMap.entrySet()){
             if(entry.getValue().size() > 0){
                 bHaveMatchingLines = true;
             }
@@ -107,9 +107,9 @@ public class ResultData {
     public String toString() {
         String result = "";
 
-        result += "Origin source name: " + OriginSource + "\n";
-        for(String similarSource : MatchingLinesMap.keySet()){
-            result += "Similar source name: " + similarSource + "\n";
+        result += "Origin source:\n" + OriginSource.toString() + "\n";
+        for(SourceFileInfo similarSource : MatchingLinesMap.keySet()){
+            result += "Similar source:\n" + similarSource.toString() + "\n";
             for(MatchedLine matchedLine : MatchingLinesMap.get(similarSource)){
                 matchedLine.LongestLineLength = LongestLineLength;
                 result += matchedLine.toString() + "\n";

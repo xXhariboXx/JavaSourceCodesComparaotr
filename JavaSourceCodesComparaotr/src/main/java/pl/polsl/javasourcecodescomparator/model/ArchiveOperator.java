@@ -102,14 +102,18 @@ public class ArchiveOperator {
         SourceCodeFile sourceFile = new SourceCodeFile();
         String currentLine;
 
+        SourceFileInfo sourceFileInfo = new SourceFileInfo();
+        sourceFileInfo.ProjectName = projectName;
+        sourceFileInfo.FileName = sourceFileName;
+
+        sourceFile.setSourceFileInfo(sourceFileInfo);
+
         int lineIndex = 1;
         while ((currentLine = bufferedReader.readLine()) != null) {
             sourceFile.addSourceLine(new SourceLine(currentLine, lineIndex));
             lineIndex++;
         }
 
-        sourceFile.setProjectName(projectName);
-        sourceFile.setSourceFileName(sourceFileName);
         sourceFile.extractPureSource();
 
         SourceFiles.add(sourceFile);

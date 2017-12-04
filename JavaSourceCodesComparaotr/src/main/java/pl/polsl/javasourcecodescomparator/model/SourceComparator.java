@@ -53,6 +53,14 @@ public class SourceComparator {
         clearGarbage();
     }
 
+    public void comparePureSources(){
+        for(SourceCodeFile sourceCodeFile : SourceFilesToCompareList){
+            sourceCodeFile.extractPureSource();
+            compareFileWithOthersPureSource(sourceCodeFile);
+        }
+        clearGarbage();
+    }
+
     public void findLongestCommonParts(){
         clearGarbage();
         for(ResultData resultData : ResultDataList){
@@ -87,32 +95,73 @@ public class SourceComparator {
     private void compareFileWithOthers(SourceCodeFile originSourceCodeFile){
         for(SourceCodeFile sourceFile : SourceFilesToCompareList){
             ResultData resultData = new ResultData();
-            resultData.OriginSource = originSourceCodeFile.getSourceFileName();
-            if(!areSourcesTheSame(originSourceCodeFile, sourceFile)){
-                resultData.SimilarSourcesList.add(sourceFile.getSourceFileName());
-                resultData.MatchingLinesMap.put(sourceFile.getSourceFileName(), compareCodeFiles(originSourceCodeFile, sourceFile));
+            resultData.OriginSource = originSourceCodeFile.getSourceFileInfo();
+            if(!areSourcesFromTheSameProject(originSourceCodeFile, sourceFile) && !areSourcesTheSameVersion(originSourceCodeFile, sourceFile)){
+                resultData.SimilarSourcesList.add(sourceFile.getSourceFileInfo().FileName);
+                if(resultData.MatchingLinesMap.containsKey(sourceFile.getSourceFileInfo())){
+                    resultData.MatchingLinesMap.get(sourceFile.getSourceFileInfo()).addAll(compareCodeFiles(originSourceCodeFile, sourceFile));
+                } else{
+                    resultData.MatchingLinesMap.put(sourceFile.getSourceFileInfo(), compareCodeFiles(originSourceCodeFile, sourceFile));
+                }
+                ResultDataList.add(resultData);
+            }
+        }
+    }
+
+    private void compareFileWithOthersPureSource(SourceCodeFile originSourceCodeFile){
+        for(SourceCodeFile sourceFile : SourceFilesToCompareList){
+            ResultData resultData = new ResultData();
+            resultData.OriginSource = originSourceCodeFile.getSourceFileInfo();
+            if(!areSourcesFromTheSameProject(originSourceCodeFile, sourceFile) && !areSourcesTheSameVersion(originSourceCodeFile, sourceFile)){
+                resultData.SimilarSourcesList.add(sourceFile.getSourceFileInfo().FileName);
+                if(resultData.MatchingLinesMap.containsKey(sourceFile.getSourceFileInfo())){
+                    resultData.MatchingLinesMap.get(sourceFile.getSourceFileInfo()).addAll(compareCodeFilesPureSources(originSourceCodeFile, sourceFile));
+                } else{
+                    resultData.MatchingLinesMap.put(sourceFile.getSourceFileInfo(), compareCodeFilesPureSources(originSourceCodeFile, sourceFile));
+                }
                 ResultDataList.add(resultData);
             }
         }
     }
 
     private boolean areSourcesTheSame(SourceCodeFile originSourceCodeFile, SourceCodeFile sourceCodeFileToCompare){
-        return (originSourceCodeFile.getAuthor() == sourceCodeFileToCompare.getAuthor()) &&
-                (originSourceCodeFile.getVersion() == sourceCodeFileToCompare.getVersion()) &&
-                (originSourceCodeFile.getProjectName() == sourceCodeFileToCompare.getProjectName());
+        return originSourceCodeFile.getSourceFileInfo().equals(sourceCodeFileToCompare.getSourceFileInfo());
+    }
+
+    private  boolean areSourcesFromTheSameProject(SourceCodeFile originSourceCodeFile, SourceCodeFile sourceCodeFileToCompare){
+        return originSourceCodeFile.getSourceFileInfo().ProjectName.equals(sourceCodeFileToCompare.getSourceFileInfo().ProjectName);
+    }
+
+    private  boolean areSourcesTheSameVersion(SourceCodeFile originSourceCodeFile, SourceCodeFile sourceCodeFileToCompare){
+        return originSourceCodeFile.getSourceFileInfo().AuthorName.equals(sourceCodeFileToCompare.getSourceFileInfo().AuthorName) &&
+                originSourceCodeFile.getSourceFileInfo().Version.equals(sourceCodeFileToCompare.getSourceFileInfo().Version);
     }
 
     private List<MatchedLine> compareCodeFiles(SourceCodeFile originSource, SourceCodeFile sourceToCompare){
         List<MatchedLine> resultList = new ArrayList<>();
-        int lastMatchedIndex = -1;
 
         for(SourceLine originSourceLine : originSource.getSourceLinesList()){
-
             for(SourceLine sourceLineToCompare : sourceToCompare.getSourceLinesList()){
-
                 if (!sourceLineToCompare.WasSourceLineMatched ) {
                     if (originSourceLine.SourceLineContent.equals(sourceLineToCompare.SourceLineContent)) {
-                        //lastMatchedIndex = sourceLineToCompare.SourceLineIndex;
+                        sourceLineToCompare.WasSourceLineMatched = true;
+                        resultList.add(new MatchedLine(originSourceLine.SourceLineIndex, sourceLineToCompare.SourceLineIndex, originSourceLine.SourceLineContent));
+                        break;
+                    }
+                }
+            }
+        }
+
+        return  resultList;
+    }
+
+    private List<MatchedLine> compareCodeFilesPureSources(SourceCodeFile originSource, SourceCodeFile sourceToCompare){
+        List<MatchedLine> resultList = new ArrayList<>();
+
+        for(SourceLine originSourceLine : originSource.getPureSourceLinesList()){
+            for(SourceLine sourceLineToCompare : sourceToCompare.getPureSourceLinesList()){
+                if (!sourceLineToCompare.WasSourceLineMatched ) {
+                    if (originSourceLine.SourceLineContent.equals(sourceLineToCompare.SourceLineContent)) {
                         sourceLineToCompare.WasSourceLineMatched = true;
                         resultList.add(new MatchedLine(originSourceLine.SourceLineIndex, sourceLineToCompare.SourceLineIndex, originSourceLine.SourceLineContent));
                         break;

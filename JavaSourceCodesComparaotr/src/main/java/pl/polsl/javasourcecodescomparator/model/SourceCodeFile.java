@@ -1,5 +1,6 @@
 package pl.polsl.javasourcecodescomparator.model;
 
+import javax.xml.transform.Source;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,21 +27,9 @@ public class SourceCodeFile {
     // Class private fields
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /**
-     * Author of source
+     * Source file info
      */
-    private String Author;
-    /**
-     * Project name
-     */
-    private String ProjectName;
-    /**
-     * Name of source file
-     */
-    private String SourceFileName;
-    /**
-     * Version of source file
-     */
-    private String Version;
+    private SourceFileInfo SourceFileInfo;
     /**
      * Content of source file
      */
@@ -57,29 +46,11 @@ public class SourceCodeFile {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Getters and setters
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public String getAuthor() {
-        return Author;
+    public pl.polsl.javasourcecodescomparator.model.SourceFileInfo getSourceFileInfo() {
+        return SourceFileInfo;
     }
-    public void setAuthor(String author) {
-        Author = author;
-    }
-    public String getProjectName() {
-        return ProjectName;
-    }
-    public void setProjectName(String projectName) {
-        ProjectName = projectName;
-    }
-    public String getSourceFileName() {
-        return SourceFileName;
-    }
-    public void setSourceFileName(String sourceFileName) {
-        SourceFileName = sourceFileName;
-    }
-    public String getVersion() {
-        return Version;
-    }
-    public void setVersion(String version) {
-        Version = version;
+    public void setSourceFileInfo(pl.polsl.javasourcecodescomparator.model.SourceFileInfo sourceFileInfo) {
+        SourceFileInfo = sourceFileInfo;
     }
     public List<SourceLine> getSourceLinesList() {
         return SourceLinesList;
@@ -110,6 +81,7 @@ public class SourceCodeFile {
         SourceLinesList = new ArrayList<>();
         PureSourceLinesList = new ArrayList<>();
         LinesNumber = SourceLinesList.size();
+        SourceFileInfo = new SourceFileInfo();
     }
 
     /**
@@ -181,10 +153,10 @@ public class SourceCodeFile {
      * @param lineToParse line of code to parse
      */
     private void parseInfo(String lineToParse){
-        if(lineToParse.contains(AUTHORDELIMETER)){
-            Author = lineToParse.substring(lineToParse.indexOf(AUTHORDELIMETER) + AUTHORDELIMETER.length() + 1);
-        } else if(lineToParse.contains(VERSIONDELIMETER)){
-            Version = lineToParse.substring(lineToParse.indexOf(VERSIONDELIMETER) + VERSIONDELIMETER.length() + 1);
+        if(SourceFileInfo.AuthorName.equals("none") && lineToParse.contains(AUTHORDELIMETER)){
+            SourceFileInfo.AuthorName = lineToParse.substring(lineToParse.indexOf(AUTHORDELIMETER) + AUTHORDELIMETER.length() + 1);
+        } else if(SourceFileInfo.Version.equals("none") && lineToParse.contains(VERSIONDELIMETER)){
+            SourceFileInfo.Version = lineToParse.substring(lineToParse.indexOf(VERSIONDELIMETER) + VERSIONDELIMETER.length() + 1);
         }
     }
 }
