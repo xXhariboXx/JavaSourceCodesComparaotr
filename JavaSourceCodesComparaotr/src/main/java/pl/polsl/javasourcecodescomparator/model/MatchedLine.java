@@ -1,22 +1,49 @@
 package pl.polsl.javasourcecodescomparator.model;
 
+/**
+ * Class that represents matched line in two source files
+ *
+ * @author Dominik Rączka
+ * @version 0.9
+ */
 public class MatchedLine {
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Class public fields
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Source line number in origin files
+     */
     public Integer OriginLineNumber;
-
+    /**
+     * Source line number in compared file
+     */
     public Integer ComparedLineNumber;
-
+    /**
+     * Content of source line in both files
+     */
     public String LineContent;
-
+    /**
+     * Length of the longest matched line in file. Used for better representing data in terminal
+     */
     public int LongestLineLength;
 
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Constructors
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Empty constructor. Initializes object
+     */
     public MatchedLine(){
         this.OriginLineNumber = -1;
         this.ComparedLineNumber = -1;
         this.LineContent = "";
     }
-
+    /**
+     * Initializes object with data
+     * @param originLineNumber number of line in origin file
+     * @param comparedLineNumber number of line in compared file
+     * @param lineContent content of the line
+     */
     public MatchedLine(int originLineNumber, int comparedLineNumber, String lineContent){
         this.OriginLineNumber = originLineNumber;
         this.ComparedLineNumber = comparedLineNumber;
@@ -24,6 +51,13 @@ public class MatchedLine {
         this.LongestLineLength = 0;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Public methods
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Checks if line is empty
+     * @return true if line is empty
+     */
     public boolean iSGarbage(){
         boolean bIsGarbage = false;
 

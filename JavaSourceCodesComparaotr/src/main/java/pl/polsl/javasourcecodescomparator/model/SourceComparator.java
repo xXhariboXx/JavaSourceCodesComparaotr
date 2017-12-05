@@ -1,12 +1,10 @@
 package pl.polsl.javasourcecodescomparator.model;
 
-import com.sun.org.apache.bcel.internal.classfile.SourceFile;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Class that performs files comparison
  * @author Dominik
  * @version 0.1
  */
@@ -21,7 +19,9 @@ public class SourceComparator {
      * All java source files to compare
      */
     private List<SourceCodeFile> SourceFilesToCompareList;
-
+    /**
+     * List of result data from comparison
+     */
     private List<ResultData> ResultDataList;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -38,6 +38,9 @@ public class SourceComparator {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructors
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Empty constructor. Initializes object
+     */
     public SourceComparator(){
         SourceFilesToCompareList = new ArrayList<>();
         ResultDataList = new ArrayList<>();
@@ -46,13 +49,18 @@ public class SourceComparator {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Public methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Compare all files with all source lines
+     */
     public void compareAllFiles(){
         for(SourceCodeFile sourceFile : SourceFilesToCompareList){
             compareFileWithOthers(sourceFile);
         }
         clearGarbage();
     }
-
+    /**
+     * Compares all files, but only pure sources
+     */
     public void comparePureSources(){
         for(SourceCodeFile sourceCodeFile : SourceFilesToCompareList){
             sourceCodeFile.extractPureSource();
@@ -61,6 +69,7 @@ public class SourceComparator {
         clearGarbage();
     }
 
+    @Deprecated
     public void findLongestCommonParts(){
         clearGarbage();
         for(ResultData resultData : ResultDataList){
@@ -68,17 +77,22 @@ public class SourceComparator {
         }
     }
 
+    /**
+     * Converts all result data from SourceComparator to String
+     * @return SourceComparator converted to String
+     */
     public String getTotalResultString() {
         String result = "";
 
         for(ResultData resultData : ResultDataList){
-            resultData.formatResultData();
+            resultData.findLongestLineLength();
             result += resultData.toString() + "\n";
         }
 
         return result;
     }
 
+    @Deprecated
     public String getLongestCommonPartsString(){
         String result = "";
 
@@ -92,6 +106,10 @@ public class SourceComparator {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Private methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Compares file with other files
+     * @param originSourceCodeFile file to compare with others
+     */
     private void compareFileWithOthers(SourceCodeFile originSourceCodeFile){
         for(SourceCodeFile sourceFile : SourceFilesToCompareList){
             ResultData resultData = new ResultData();
@@ -107,7 +125,10 @@ public class SourceComparator {
             }
         }
     }
-
+    /**
+     * Compares file with other files, only pure sources
+     * @param originSourceCodeFile file to compare with others
+     */
     private void compareFileWithOthersPureSource(SourceCodeFile originSourceCodeFile){
         for(SourceCodeFile sourceFile : SourceFilesToCompareList){
             ResultData resultData = new ResultData();

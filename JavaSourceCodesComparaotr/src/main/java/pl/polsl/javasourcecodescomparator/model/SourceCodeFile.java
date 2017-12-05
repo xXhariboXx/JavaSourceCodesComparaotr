@@ -1,14 +1,13 @@
 package pl.polsl.javasourcecodescomparator.model;
 
-import javax.xml.transform.Source;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class to hold sorce files data
+ * Class to hold source files data
  *
  * @author Dominik Rączka
- * @version 0.1
+ * @version 0.9
  */
 public class SourceCodeFile {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -46,10 +45,10 @@ public class SourceCodeFile {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Getters and setters
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public pl.polsl.javasourcecodescomparator.model.SourceFileInfo getSourceFileInfo() {
+    public SourceFileInfo getSourceFileInfo() {
         return SourceFileInfo;
     }
-    public void setSourceFileInfo(pl.polsl.javasourcecodescomparator.model.SourceFileInfo sourceFileInfo) {
+    public void setSourceFileInfo(SourceFileInfo sourceFileInfo) {
         SourceFileInfo = sourceFileInfo;
     }
     public List<SourceLine> getSourceLinesList() {
@@ -113,6 +112,9 @@ public class SourceCodeFile {
         LinesNumber = SourceLinesList.size();
     }
 
+    /**
+     * Extracts "pure" code from source file
+     */
     public void extractPureSource(){
         for(SourceLine sourceLine : SourceLinesList){
             String lineContent = sourceLine.SourceLineContent;

@@ -6,21 +6,43 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class that represents result data from comparing files
+ *
+ * @author Dominik Rączka
+ * @version 0.5
+ */
 public class ResultData {
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Class public fields
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Information about origin source
+     */
     public SourceFileInfo OriginSource;
-
+    /**
+     * List of similar sources
+     */
     public List<String> SimilarSourcesList;
-
+    /**
+     * Map that holds all matched lines from every matched source file with info about the source file
+     */
     public Map<SourceFileInfo, List<MatchedLine>> MatchingLinesMap;
-
+    /**
+     *
+     */
     public Map<SourceFileInfo, List<MatchedLine>> LongestCommonPartsMap;
-
+    /**
+     * Length of longest line - for showing debug results
+     */
     private int LongestLineLength;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructors
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Empty constructor. Initializes object
+     */
     public ResultData(){
         SimilarSourcesList = new ArrayList<>();
         MatchingLinesMap = new HashMap<>();
@@ -31,6 +53,10 @@ public class ResultData {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Public methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Finds longest common parts
+     */
+    @Deprecated
     public void findLongestCommonParts(){
         for(SourceFileInfo similarSource : MatchingLinesMap.keySet()){
             MatchedLine previousMatchedLine = new MatchedLine();
@@ -55,8 +81,11 @@ public class ResultData {
             
             LongestCommonPartsMap.put(similarSource, longestMatchedLines);
         }
-}
-
+    }
+    /**
+     * Converts LongestCommonPartsMap to String
+     * @return String representation of LongestCommonPartsMap
+     */
     public String longestCommonPartsToString(){
         String result = "";
 
@@ -71,8 +100,10 @@ public class ResultData {
 
         return result;
     }
-
-    public void formatResultData(){
+    /**
+     * Finds longest line in file
+     */
+    public void findLongestLineLength(){
         for(SourceFileInfo similarSource : MatchingLinesMap.keySet()) {
             for(MatchedLine matchedLine : MatchingLinesMap.get(similarSource)) {
                 if (matchedLine.LineContent.length() > LongestLineLength) {
@@ -81,7 +112,9 @@ public class ResultData {
             }
         }
     }
-
+    /**
+     * Clears garbage compared files
+     */
     public void clearGarbageResults(){
         for(Map.Entry<SourceFileInfo, List<MatchedLine>> entry : MatchingLinesMap.entrySet()){
             entry.setValue(clearGarbageResultsFromSourceFile(entry.getValue()));
@@ -119,6 +152,14 @@ public class ResultData {
         return result;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Private methods
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Clears garbage lines from list of source lines
+     * @param matchedLines list of matched lines to check
+     * @return list of matched lines without garbage lines
+     */
     private List<MatchedLine> clearGarbageResultsFromSourceFile(List<MatchedLine> matchedLines){
         List<MatchedLine> nonGarbageLines = new ArrayList<>();
         MatchedLine previousMatchedLine = new MatchedLine();

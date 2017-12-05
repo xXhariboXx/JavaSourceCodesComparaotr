@@ -1,15 +1,35 @@
 package pl.polsl.javasourcecodescomparator.model;
 
+/**
+ * Class that represents source file information
+ *
+ * @author Dominik Rączka
+ * @version 0.9
+ */
 public class SourceFileInfo {
-
+    /**
+     * Name of source file
+     */
     public String FileName;
-
+    /**
+     * Name of author of the source file
+     */
     public String AuthorName;
-
+    /**
+     * Version of source file
+     */
     public String Version;
-
+    /**
+     * Project name of source file
+     */
     public String ProjectName;
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Constructors
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Empty constructor. Initializes object
+     */
     public SourceFileInfo(){
         FileName = "none";
         AuthorName = "none";
@@ -17,6 +37,9 @@ public class SourceFileInfo {
         ProjectName = "none";
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Public override methods
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public String toString() {
         String result = "";

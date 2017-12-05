@@ -12,7 +12,7 @@ import java.util.zip.ZipFile;
  * Class to process package and list all projects inside it
  *
  * @author Dominik Rączka
- * @version 0.1
+ * @version 0.9
  */
 public class ArchiveOperator {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
