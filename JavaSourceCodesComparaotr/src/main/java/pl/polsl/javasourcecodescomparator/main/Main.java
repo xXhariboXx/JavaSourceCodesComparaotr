@@ -23,8 +23,10 @@ public class Main {
         ArchiveOperator operator = new ArchiveOperator();
         SourceComparator comparator = new SourceComparator();
         try {
-            operator.readArchive("F:/TestFolder");
-            comparator.setSourceFilesToCompareList(operator.getSourceFiles());
+            operator.readArchive("F:\\GIT foldery\\JavaSourceCodesComparator\\JAVA_SSI-r1--19975");
+            System.out.println(operator.getProjectsNamesString());
+            System.out.println(operator.getErrorMessagesReport());
+            comparator.setSourceFilesToCompareList(operator.getSourceFilesList());
             comparator.comparePureSources();
             System.out.println(comparator.getTotalResultString());
         } catch (Exception e) {

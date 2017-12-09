@@ -1,5 +1,7 @@
 package pl.polsl.javasourcecodescomparator.model;
 
+import pl.polsl.javasourcecodescomparator.exceptions.WrongFileExtensionException;
+
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -19,18 +21,33 @@ public class ArchiveOperator {
     // Class private fields
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /**
-     * All java source files from project
+     * All java source files from directory
      */
-    private List<SourceCodeFile> SourceFiles;
+    private List<SourceCodeFile> SourceFilesList;
+    /**
+     * List of error messages from opening .zip files;
+     */
+    private List<Exception> ErrorExceptionsList;
+    /**
+     * List of projects name in directory
+     */
+    private List<String> ProjectsNamesList;
+    private int TotalProjectsNumber;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Getters and setters
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public List<SourceCodeFile> getSourceFiles() {
-        return SourceFiles;
+    public List<SourceCodeFile> getSourceFilesList() {
+        return SourceFilesList;
     }
-    public void setSourceFiles(List<SourceCodeFile> sourceFiles) {
-        SourceFiles = sourceFiles;
+    public void setSourceFilesList(List<SourceCodeFile> sourceFilesList) {
+        SourceFilesList = sourceFilesList;
+    }
+    public List<Exception> getErrorExceptionsList() {
+        return ErrorExceptionsList;
+    }
+    public void setErrorExceptionsList(List<Exception> errorExceptionsList) {
+        ErrorExceptionsList = errorExceptionsList;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -40,9 +57,11 @@ public class ArchiveOperator {
      * Empty constructor. Initializes object
      */
     public ArchiveOperator(){
-        SourceFiles = new ArrayList<>();
+        SourceFilesList = new ArrayList<>();
+        ErrorExceptionsList = new ArrayList<>();
+        ProjectsNamesList = new ArrayList<>();
+        TotalProjectsNumber = 0;
     }
-
     /**
      * Reads folder with projects
      *
@@ -53,11 +72,56 @@ public class ArchiveOperator {
         File folder = new File(archivePath);
         File[] listOfFiles = folder.listFiles();
 
-        for (File file : listOfFiles) {
-            if (file.getName().contains(".zip")) {
-                exploreZip(file.getPath());
+
+            for (File file : listOfFiles) {
+                TotalProjectsNumber++;
+                File inFolder = new File(file.getPath());
+                File[] inListOfFiles = inFolder.listFiles();
+                for (File inFile : inListOfFiles) {
+                    try {
+                        if (inFile.getName().contains(".zip")) {
+                            exploreZip(inFile.getPath());
+                        } else {
+                            ErrorExceptionsList.add(new WrongFileExtensionException(inFile));
+                        }
+                    } catch (Exception e) {
+                        //ErrorExceptionsList.add("Exception in file: " + inFile.getPath() + ". Exception: " + e.getMessage());
+                        ErrorExceptionsList.add(new WrongFileExtensionException(e.getMessage()));
+                    }
+                }
             }
+    }
+
+    public String getErrorMessagesReport(){
+        String result = "";
+
+        result += "Error report.\n";
+        if(ErrorExceptionsList.size() > 0) {
+            for (Exception exception : ErrorExceptionsList) {
+                result += "Error: " + exception.getMessage() + "\n";
+            }
+        } else {
+            result += "No errors!";
         }
+
+        return result;
+    }
+    /**
+     * Converts project names from directory to String representation
+     * @return String representation of ProjectsNames
+     */
+    public String getProjectsNamesString(){
+        String result = "";
+
+        result += "Projects in directory: \n";
+        for (String projectName : ProjectsNamesList){
+            result += "\t- " + projectName + "\n";
+        }
+        result += "Total projects number: " + TotalProjectsNumber + "\n";
+        result += "Validated projects number: " + ProjectsNamesList.size() + "\n";
+        result += "Error projects number: " + ErrorExceptionsList.size() + "\n";
+
+        return result;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -82,6 +146,7 @@ public class ArchiveOperator {
             if (entry.isDirectory()) {
                 if(folderNumber == 1) {
                     projectName = extractProjectName(entry.getName());
+                    ProjectsNamesList.add(projectName);
                 }
                 folderNumber++;
             } else if (!entry.isDirectory() && entry.getName().endsWith(".java")) {
@@ -116,7 +181,7 @@ public class ArchiveOperator {
 
         sourceFile.extractPureSource();
 
-        SourceFiles.add(sourceFile);
+        SourceFilesList.add(sourceFile);
     }
 
     /**
@@ -128,7 +193,7 @@ public class ArchiveOperator {
         String projectName = "";
 
         projectName = directoryPath.substring(0, directoryPath.length() - 1);
-        projectName = projectName.substring(projectName.lastIndexOf("/") + 1);
+        projectName = projectName.substring(0, projectName.indexOf("/"));
 
         return  projectName;
     }
