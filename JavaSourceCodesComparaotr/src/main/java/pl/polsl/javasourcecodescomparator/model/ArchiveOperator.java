@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
 
 /**
  * Class to process package and list all projects inside it
@@ -71,9 +71,8 @@ public class ArchiveOperator {
      * @param archivePath path to folder with projects
      */
     public void readArchive(String archivePath) {
-        File folder = new File(archivePath);
+        File folder = new File(unZipDirectory((archivePath)));
         File[] listOfFiles = folder.listFiles();
-
 
         for (File file : listOfFiles) {
             TotalProjectsNumber++;
@@ -132,6 +131,23 @@ public class ArchiveOperator {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Private methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    private String unZipDirectory(String pathToDirectory){
+        String result = "";
+
+        try {
+            net.lingala.zip4j.core.ZipFile zipFile = new net.lingala.zip4j.core.ZipFile(pathToDirectory);
+
+            String pathToUnzip = pathToDirectory.replaceAll(".zip", "");
+
+            zipFile.extractAll(pathToUnzip);
+
+            result = pathToUnzip;
+        } catch (ZipException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
     /**
      * Explores zip projects to extract source codes
      * @param zipFilePath path to zip file with project
@@ -139,7 +155,7 @@ public class ArchiveOperator {
      */
     private void exploreZip(String zipFilePath) throws Exception {
         Charset CP866 = Charset.forName("CP866");
-        ZipFile zipFile = new ZipFile(zipFilePath, CP866);
+        java.util.zip.ZipFile zipFile = new java.util.zip.ZipFile(zipFilePath, CP866);
 
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
 

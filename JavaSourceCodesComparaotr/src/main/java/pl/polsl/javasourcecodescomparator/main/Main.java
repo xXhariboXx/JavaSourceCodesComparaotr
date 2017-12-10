@@ -7,6 +7,8 @@ package pl.polsl.javasourcecodescomparator.main;
 
 import pl.polsl.javasourcecodescomparator.controller.Controller;
 
+import javax.swing.*;
+
 /**
  *
  * @author Dominik
@@ -17,8 +19,15 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Controller controller = new Controller(args);
-        controller.run();
+        SwingUtilities.invokeLater(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Controller controller = new Controller(args);
+                controller.run();
+            }
+        });
     }
     
 }
