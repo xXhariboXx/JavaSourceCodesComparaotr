@@ -7,6 +7,7 @@ import pl.polsl.javasourcecodescomparator.view.MainView;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.PrintWriter;
 
 /**
  *
@@ -85,12 +86,25 @@ public class Controller {
             sourceComparator.compareAllFiles();
 
             System.out.println(sourceComparator.getTotalResultString());
+            printReport();
         } else {
             System.out.println("Wrong input arguments");
         }
     }
 
     private void printReport(){
+        PrintWriter fileHandler = null;
+        try
+        {
+            fileHandler = new PrintWriter(DirectoryPath + ".txt");
+        }catch (Exception e)
+        {
+            JOptionPane.showMessageDialog(mainFrame, "File writting failure");
+            return;
+        }
 
+
+        fileHandler.write(sourceComparator.getTotalResultString().replaceAll("\n", "\r\n"));
+        fileHandler.close();
     }
 }
