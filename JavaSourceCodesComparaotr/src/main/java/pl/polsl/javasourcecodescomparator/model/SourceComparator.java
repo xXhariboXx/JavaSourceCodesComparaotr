@@ -23,7 +23,10 @@ public class SourceComparator {
      * List of result data from comparison
      */
     private List<ResultData> ResultDataList;
-
+    /**
+     *
+     */
+    private double MinimumSimilarityPercentage;
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Getters and setters
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,7 +36,20 @@ public class SourceComparator {
     public void setSourceFilesToCompareList(List<SourceCodeFile> sourceFilesToCompareList) {
         this.SourceFilesToCompareList = sourceFilesToCompareList;
     }
+    public double getMinimumSimilarityPercentage() {
+        return MinimumSimilarityPercentage;
+    }
+    public void setMinimumSimilarityPercentage(double minimumSimilarityPercentage) {
+        MinimumSimilarityPercentage = minimumSimilarityPercentage;
+    }
+    public void setMinimumSimilarityPercentage(String minimumSimilarityPercentage) {
+        try{
+            MinimumSimilarityPercentage = Double.parseDouble(minimumSimilarityPercentage);
+        } catch(Exception e){
+            MinimumSimilarityPercentage = 10.0;
+        }
 
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructors
@@ -131,7 +147,7 @@ public class SourceComparator {
 
         for(ResultData resultData : ResultDataList){
             resultData.clearGarbageResults();
-            if(resultData.haveMatchingLines() && resultData.iSimilar(10)){
+            if(resultData.haveMatchingLines() && resultData.iSimilar(MinimumSimilarityPercentage)){
                 listToSave.add(resultData);
             }
         }

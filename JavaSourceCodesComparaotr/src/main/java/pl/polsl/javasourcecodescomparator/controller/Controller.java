@@ -88,6 +88,7 @@ public class Controller {
             System.out.println(archiveOperator.getProjectsNamesString());
             System.out.println(archiveOperator.getErrorMessagesReport());
 
+            sourceComparator.setMinimumSimilarityPercentage(mainView.getSimilarityPercentageTextField().getText());
             sourceComparator.setSourceFilesToCompareList(archiveOperator.getSourceFilesList());
             sourceComparator.compareAllFiles();
 

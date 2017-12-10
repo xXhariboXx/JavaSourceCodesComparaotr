@@ -221,7 +221,7 @@ public class ResultData {
         Map<SourceFileInfo, AccuracyData> resultsToSave = new HashMap<>();
 
         for(Map.Entry<SourceFileInfo, AccuracyData> entry : AccuracyDataMap.entrySet()){
-            if(entry.getValue().isEquallySized() && entry.getValue().SimilarityPercentage > similarityPercentage){
+            if(entry.getValue().isEquallySized() && entry.getValue().SimilarityPercentage >= similarityPercentage){
                 resultsToSave.put(entry.getKey(), entry.getValue());
             }
         }
