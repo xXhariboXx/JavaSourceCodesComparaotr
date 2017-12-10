@@ -4,7 +4,7 @@ package pl.polsl.javasourcecodescomparator.model;
  * Class that represents source file information
  *
  * @author Dominik Rączka
- * @version 0.9
+ * @version 1.0
  */
 public class SourceFileInfo {
     /**

@@ -10,6 +10,7 @@ import java.util.List;
  * @version 0.9
  */
 public class SourceCodeFile {
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Class final private fields
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,19 +131,6 @@ public class SourceCodeFile {
                 PureSourceLinesList.add(sourceLine);
             }
         }
-    }
-
-    public void clearEmptyLines(){
-        List<SourceLine> listToSave = new ArrayList<>();
-
-        for(SourceLine sourceLine : SourceLinesList){
-            if(sourceLine.SourceLineContent.length() != 0){
-                listToSave.add(sourceLine);
-            }
-        }
-
-        SourceLinesList.clear();
-        SourceLinesList.addAll(listToSave);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -10,7 +10,7 @@ import java.util.Map;
  * Class that represents result data from comparing files
  *
  * @author Dominik Rączka
- * @version 0.5
+ * @version 0.9
  */
 public class ResultData {
 
@@ -21,11 +21,26 @@ public class ResultData {
      * @version 0.9
      */
     public class AccuracyData{
+        /**
+         * Number of lines of important code in source file
+         */
         private int TotalLinesNumberInOriginFile;
+        /**
+         * Number of lines of important code in compared file
+         */
         private int TotalLinesNumberInComparedFile;
+        /**
+         * Number of matching lines between two files
+         */
         private int MatchingLinesNumber;
+        /**
+         * Percentage of how much origin file is similar to compared file
+         */
         private double SimilarityPercentage;
 
+        /**
+         * Calculates SimilarityPercentage
+         */
         private void calculateSimilarityPercentage(){
             SimilarityPercentage = (MatchingLinesNumber * 1.0)/(TotalLinesNumberInOriginFile * 1.0) * (100 * 1.0);
         }
@@ -51,19 +66,12 @@ public class ResultData {
      */
     public SourceFileInfo OriginSource;
     /**
-     * List of similar sources
-     */
-    @Deprecated
-    public List<String> SimilarSourcesList;
-    /**
      * Map that holds all matched lines from every matched source file with info about the source file
      */
     public Map<SourceFileInfo, List<MatchedLine>> MatchingLinesMap;
     /**
-     *
+     * Map that hold numerical data about similarity
      */
-    public Map<SourceFileInfo, List<MatchedLine>> LongestCommonPartsMap;
-
     public Map<SourceFileInfo, AccuracyData> AccuracyDataMap;
     /**
      * Length of longest line - for showing debug results
@@ -78,9 +86,7 @@ public class ResultData {
      * Empty constructor. Initializes object
      */
     public ResultData(){
-        SimilarSourcesList = new ArrayList<>();
         MatchingLinesMap = new HashMap<>();
-        LongestCommonPartsMap = new HashMap<>();
         AccuracyDataMap = new HashMap<>();
         this.LongestLineLength = 0;
     }
@@ -88,57 +94,14 @@ public class ResultData {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Public methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /**
-     * Finds longest common parts
-     */
-    @Deprecated
-    public void findLongestCommonParts(){
-        for(SourceFileInfo similarSource : MatchingLinesMap.keySet()){
-            MatchedLine previousMatchedLine = new MatchedLine();
-            List<MatchedLine> longestMatchedLines = new ArrayList<>();
 
-            for(MatchedLine matchedLine : MatchingLinesMap.get(similarSource)) {
-                if(previousMatchedLine.OriginLineNumber == -1){
-                    previousMatchedLine = matchedLine;
-                } else{
-                    if(previousMatchedLine.OriginLineNumber == (matchedLine.OriginLineNumber - 1)){
-                        longestMatchedLines.add(previousMatchedLine);
-                    } else if(longestMatchedLines.size() > 0 && longestMatchedLines.get(longestMatchedLines.size() - 1).equals(previousMatchedLine)){
-                        longestMatchedLines.add(previousMatchedLine);
-                    }
-                    previousMatchedLine = matchedLine;
-                }
-
-                if(matchedLine.LineContent.length() > LongestLineLength){
-                    LongestLineLength = matchedLine.LineContent.length();
-                }
-            }
-            
-            LongestCommonPartsMap.put(similarSource, longestMatchedLines);
-        }
-    }
-    /**
-     * Converts LongestCommonPartsMap to String
-     * @return String representation of LongestCommonPartsMap
-     */
-    public String longestCommonPartsToString(){
-        String result = "";
-
-        result += "Origin source:\n" + OriginSource.toString() + "\n";
-        for(SourceFileInfo similarSource : LongestCommonPartsMap.keySet()){
-            result += "Similar source:\n" + similarSource.toString() + "\n";
-            for(MatchedLine matchedLine : LongestCommonPartsMap.get(similarSource)){
-                matchedLine.LongestLineLength = LongestLineLength;
-                result += matchedLine.toString() + "\n";
-            }
-        }
-
-        return result;
-    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Package-private methods
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * Finds longest line in file
      */
-    public void findLongestLineLength(){
+    void findLongestLineLength(){
         for(SourceFileInfo similarSource : MatchingLinesMap.keySet()) {
             for(MatchedLine matchedLine : MatchingLinesMap.get(similarSource)) {
                 if (matchedLine.LineContent.length() > LongestLineLength) {
@@ -150,13 +113,16 @@ public class ResultData {
     /**
      * Clears garbage compared files
      */
-    public void clearGarbageResults(){
+    void clearGarbageResults(){
         for(Map.Entry<SourceFileInfo, List<MatchedLine>> entry : MatchingLinesMap.entrySet()){
             entry.setValue(clearGarbageResultsFromSourceFile(entry.getValue()));
         }
     }
-
-    public boolean haveMatchingLines(){
+    /**
+     * Checks if object contains matching lines
+     * @return true if ResultData contains any matching lines
+     */
+    boolean haveMatchingLines(){
         boolean bHaveMatchingLines = false;
 
         for(Map.Entry<SourceFileInfo, List<MatchedLine>> entry : MatchingLinesMap.entrySet()){
@@ -168,7 +134,27 @@ public class ResultData {
         return bHaveMatchingLines;
     }
 
-    public void calculateNumericalResultData(SourceCodeFile originFile, SourceCodeFile comparedFile){
+    /**
+     * Checks if data have info about similar sources
+     * @param similarityPercentage minimum percentage to call files similar
+     * @return true if result data have info about similar sources
+     */
+    boolean iSimilar(double similarityPercentage){
+        boolean result = false;
+
+        clearAccuracyData(similarityPercentage);
+        if(AccuracyDataMap.size() > 0){
+            result = true;
+        }
+
+        return result;
+    }
+    /**
+     * Calculates numerical result of comparison
+     * @param originFile origin file
+     * @param comparedFile file that is compared to origin file
+     */
+    void calculateNumericalResultData(SourceCodeFile originFile, SourceCodeFile comparedFile){
         AccuracyData accuracyData = new AccuracyData();
 
         accuracyData.TotalLinesNumberInOriginFile = originFile.getLinesNumber();
@@ -210,21 +196,30 @@ public class ResultData {
      */
     private List<MatchedLine> clearGarbageResultsFromSourceFile(List<MatchedLine> matchedLines){
         List<MatchedLine> nonGarbageLines = new ArrayList<>();
-//        MatchedLine previousMatchedLine = new MatchedLine();
 
         for(MatchedLine line : matchedLines){
-//            if(previousMatchedLine.OriginLineNumber == -1) {
-//                previousMatchedLine = line;
-//            }
-
-            //if((previousMatchedLine.OriginLineNumber == (line.OriginLineNumber - 1)) || !line.iSGarbage()) {
             if(!line.iSGarbage()){
                 nonGarbageLines.add(line);
             }
-
-            //previousMatchedLine = line;
         }
 
         return nonGarbageLines;
+    }
+
+    /**
+     * Clears accuracy data that are less similar than similarityPercentage
+     * @param similarityPercentage minimum percentage to call files similar
+     */
+    private void clearAccuracyData(double similarityPercentage){
+        Map<SourceFileInfo, AccuracyData> resultsToSave = new HashMap<>();
+
+        for(Map.Entry<SourceFileInfo, AccuracyData> entry : AccuracyDataMap.entrySet()){
+            if(entry.getValue().SimilarityPercentage > similarityPercentage){
+                resultsToSave.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        AccuracyDataMap.clear();
+        AccuracyDataMap.putAll(resultsToSave);
     }
 }

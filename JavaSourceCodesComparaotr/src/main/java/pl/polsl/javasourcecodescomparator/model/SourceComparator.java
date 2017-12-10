@@ -58,24 +58,6 @@ public class SourceComparator {
         }
         clearGarbage();
     }
-    /**
-     * Compares all files, but only pure sources
-     */
-    public void comparePureSources(){
-        for(SourceCodeFile sourceCodeFile : SourceFilesToCompareList){
-            //sourceCodeFile.extractPureSource();
-            compareFileWithOthersPureSource(sourceCodeFile);
-        }
-        clearGarbage();
-    }
-
-    @Deprecated
-    public void findLongestCommonParts(){
-        clearGarbage();
-        for(ResultData resultData : ResultDataList){
-            //resultData.findLongestCommonParts();
-        }
-    }
 
     /**
      * Converts all result data from SourceComparator to String
@@ -87,17 +69,6 @@ public class SourceComparator {
         for(ResultData resultData : ResultDataList){
             resultData.findLongestLineLength();
             result += resultData.toString() + "\n";
-        }
-
-        return result;
-    }
-
-    @Deprecated
-    public String getLongestCommonPartsString(){
-        String result = "";
-
-        for(ResultData resultData : ResultDataList){
-            result += resultData.longestCommonPartsToString() + "\n";
         }
 
         return result;
@@ -116,30 +87,9 @@ public class SourceComparator {
             resultData.OriginSource = originSourceCodeFile.getSourceFileInfo();
             if(!areSourcesFromTheSameProject(originSourceCodeFile, sourceFile) && !areSourcesTheSameVersion(originSourceCodeFile, sourceFile)){
 
-                resultData.SimilarSourcesList.add(sourceFile.getSourceFileInfo().FileName);
-
                 resultData.MatchingLinesMap.put(sourceFile.getSourceFileInfo(), compareCodeFiles(originSourceCodeFile, sourceFile));
                 resultData.calculateNumericalResultData(originSourceCodeFile, sourceFile);
 
-                ResultDataList.add(resultData);
-            }
-        }
-    }
-    /**
-     * Compares file with other files, only pure sources
-     * @param originSourceCodeFile file to compare with others
-     */
-    private void compareFileWithOthersPureSource(SourceCodeFile originSourceCodeFile){
-        for(SourceCodeFile sourceFile : SourceFilesToCompareList){
-            ResultData resultData = new ResultData();
-            resultData.OriginSource = originSourceCodeFile.getSourceFileInfo();
-            if(!areSourcesFromTheSameProject(originSourceCodeFile, sourceFile) && !areSourcesTheSameVersion(originSourceCodeFile, sourceFile)){
-                resultData.SimilarSourcesList.add(sourceFile.getSourceFileInfo().FileName);
-                if(resultData.MatchingLinesMap.containsKey(sourceFile.getSourceFileInfo())){
-                    resultData.MatchingLinesMap.get(sourceFile.getSourceFileInfo()).addAll(compareCodeFilesPureSources(originSourceCodeFile, sourceFile));
-                } else{
-                    resultData.MatchingLinesMap.put(sourceFile.getSourceFileInfo(), compareCodeFilesPureSources(originSourceCodeFile, sourceFile));
-                }
                 ResultDataList.add(resultData);
             }
         }
@@ -176,30 +126,12 @@ public class SourceComparator {
         return  resultList;
     }
 
-    private List<MatchedLine> compareCodeFilesPureSources(SourceCodeFile originSource, SourceCodeFile sourceToCompare){
-        List<MatchedLine> resultList = new ArrayList<>();
-
-        for(SourceLine originSourceLine : originSource.getPureSourceLinesList()){
-            for(SourceLine sourceLineToCompare : sourceToCompare.getPureSourceLinesList()){
-                if (!sourceLineToCompare.WasSourceLineMatched ) {
-                    if (originSourceLine.SourceLineContent.equals(sourceLineToCompare.SourceLineContent)) {
-                        sourceLineToCompare.WasSourceLineMatched = true;
-                        resultList.add(new MatchedLine(originSourceLine.SourceLineIndex, sourceLineToCompare.SourceLineIndex, originSourceLine.SourceLineContent));
-                        break;
-                    }
-                }
-            }
-        }
-
-        return  resultList;
-    }
-
     private void clearGarbage(){
         ArrayList<ResultData> listToSave = new ArrayList<>();
 
         for(ResultData resultData : ResultDataList){
             resultData.clearGarbageResults();
-            if(resultData.haveMatchingLines()){
+            if(resultData.haveMatchingLines() && resultData.iSimilar(10)){
                 listToSave.add(resultData);
             }
         }

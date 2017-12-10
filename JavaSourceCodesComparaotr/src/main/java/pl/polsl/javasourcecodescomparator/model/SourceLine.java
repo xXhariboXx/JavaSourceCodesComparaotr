@@ -7,10 +7,17 @@ package pl.polsl.javasourcecodescomparator.model;
  * @version 0.9
  */
 public class SourceLine {
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Class public fields
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * Content of source line
      */
     public String SourceLineContent;
+    /**
+     * Content of processed lines - only important data
+     */
     public String ProcessedLineContent;
     /**
      * Indes of source line
@@ -21,6 +28,9 @@ public class SourceLine {
      */
     public  boolean WasSourceLineMatched;
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Constructors
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * Creates new SourceLine. Sets WasLineMatched to false by default
      * @param sourceLineContent content of source line to create
@@ -32,16 +42,22 @@ public class SourceLine {
         this.WasSourceLineMatched = false;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Public methods
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public boolean processSourceLine(){
-        while(SourceLineContent.startsWith(" ")){
-            SourceLineContent = SourceLineContent.substring(1);
-        }
-
         if(SourceLineContent.contains("{")) {
             SourceLineContent = SourceLineContent.replaceAll("\\{", "");
         }
         if(SourceLineContent.contains("}")) {
             SourceLineContent = SourceLineContent.replaceAll("}", "");
+        }
+        if(SourceLineContent.contains("\t")) {
+            SourceLineContent = SourceLineContent.replaceAll("\t", "");
+        }
+
+        while(SourceLineContent.startsWith(" ")){
+            SourceLineContent = SourceLineContent.substring(1);
         }
 
         ProcessedLineContent = SourceLineContent;
@@ -61,6 +77,10 @@ public class SourceLine {
 
         return  validateSourceLine();
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Private methods
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private boolean validateSourceLine(){
         boolean result = true;

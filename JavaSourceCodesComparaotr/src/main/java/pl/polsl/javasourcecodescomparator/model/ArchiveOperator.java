@@ -32,6 +32,9 @@ public class ArchiveOperator {
      * List of projects name in directory
      */
     private List<String> ProjectsNamesList;
+    /**
+     * Total number of projects in directory
+     */
     private int TotalProjectsNumber;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,6 +93,10 @@ public class ArchiveOperator {
         }
     }
 
+    /**
+     * Gets report of errors during reading the directory
+     * @return String representation of errors from reading the directory
+     */
     public String getErrorMessagesReport(){
         String result = "";
 
