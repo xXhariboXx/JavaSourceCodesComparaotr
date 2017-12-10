@@ -85,7 +85,7 @@ public class SourceComparator {
         for(SourceCodeFile sourceFile : SourceFilesToCompareList){
             ResultData resultData = new ResultData();
             resultData.OriginSource = originSourceCodeFile.getSourceFileInfo();
-            if(!areSourcesFromTheSameProject(originSourceCodeFile, sourceFile) && !areSourcesTheSameVersion(originSourceCodeFile, sourceFile)){
+            if(!areSourcesFromTheSameProject(originSourceCodeFile, sourceFile) && !areSourcesTheSameVersion(originSourceCodeFile, sourceFile) && !originSourceCodeFile.getSourceFileInfo().AuthorName.equals(sourceFile.getSourceFileInfo().AuthorName)){
 
                 resultData.MatchingLinesMap.put(sourceFile.getSourceFileInfo(), compareCodeFiles(originSourceCodeFile, sourceFile));
                 resultData.calculateNumericalResultData(originSourceCodeFile, sourceFile);

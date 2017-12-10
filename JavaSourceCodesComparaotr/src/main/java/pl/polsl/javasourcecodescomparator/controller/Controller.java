@@ -12,7 +12,7 @@ import java.io.PrintWriter;
 /**
  *
  * @author Dominik
- * @version 0.1
+ * @version 0.9
  */
 
 public class Controller {
@@ -40,7 +40,6 @@ public class Controller {
 
     public void run(){
         try {
-
             //archiveOperator.readArchive("F:\\GIT foldery\\JavaSourceCodesComparator\\JAVA_SSI-r1--19975");
             //operator.readArchive("F:\\TestFolder");
             createJFrame();
@@ -49,8 +48,13 @@ public class Controller {
                 @Override
                 public void actionPerformed(ActionEvent actionEvent)
                 {
-                    if(actionEvent.getSource() == mainView.getFileChooser())
-                        compareSources(mainView.getFileChooser().getSelectedFile().getPath());
+                    if(actionEvent.getSource() == mainView.getFileChooser()){
+                            if(actionEvent.getActionCommand().equals(javax.swing.JFileChooser.APPROVE_SELECTION)) {
+                                compareSources(mainView.getFileChooser().getSelectedFile().getPath());
+                            } else if(actionEvent.getActionCommand().equals(JFileChooser.CANCEL_SELECTION)){
+                                System.exit(0);
+                        }
+                    }
                 }
             };
             mainView.getFileChooser().addActionListener(actionListener);
@@ -76,6 +80,8 @@ public class Controller {
     }
 
     private void compareSources(String pathToDirectory) {
+        DirectoryPath = pathToDirectory.replaceAll(".zip", "");
+
         if (!DirectoryPath.equals("none")) {
             archiveOperator.readArchive(pathToDirectory);
 

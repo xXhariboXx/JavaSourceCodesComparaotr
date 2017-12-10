@@ -44,6 +44,13 @@ public class ResultData {
         private void calculateSimilarityPercentage(){
             SimilarityPercentage = (MatchingLinesNumber * 1.0)/(TotalLinesNumberInOriginFile * 1.0) * (100 * 1.0);
         }
+        /**
+         * Checks if origin source and compared source are similar size
+         * @return true if are similar size (not bigger than 5 times difference)
+         */
+        private boolean isEquallySized(){
+            return TotalLinesNumberInOriginFile*5 > TotalLinesNumberInComparedFile || TotalLinesNumberInComparedFile*5 < TotalLinesNumberInOriginFile;
+        }
 
         @Override
         public String toString() {
@@ -214,7 +221,7 @@ public class ResultData {
         Map<SourceFileInfo, AccuracyData> resultsToSave = new HashMap<>();
 
         for(Map.Entry<SourceFileInfo, AccuracyData> entry : AccuracyDataMap.entrySet()){
-            if(entry.getValue().SimilarityPercentage > similarityPercentage){
+            if(entry.getValue().isEquallySized() && entry.getValue().SimilarityPercentage > similarityPercentage){
                 resultsToSave.put(entry.getKey(), entry.getValue());
             }
         }
