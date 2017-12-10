@@ -66,30 +66,28 @@ public class ArchiveOperator {
      * Reads folder with projects
      *
      * @param archivePath path to folder with projects
-     * @throws Exception
      */
-    public void readArchive(String archivePath) throws Exception {
+    public void readArchive(String archivePath) {
         File folder = new File(archivePath);
         File[] listOfFiles = folder.listFiles();
 
 
-            for (File file : listOfFiles) {
-                TotalProjectsNumber++;
-                File inFolder = new File(file.getPath());
-                File[] inListOfFiles = inFolder.listFiles();
-                for (File inFile : inListOfFiles) {
-                    try {
-                        if (inFile.getName().contains(".zip")) {
-                            exploreZip(inFile.getPath());
-                        } else {
-                            ErrorExceptionsList.add(new WrongFileExtensionException(inFile));
-                        }
-                    } catch (Exception e) {
-                        //ErrorExceptionsList.add("Exception in file: " + inFile.getPath() + ". Exception: " + e.getMessage());
-                        ErrorExceptionsList.add(new WrongFileExtensionException(e.getMessage()));
+        for (File file : listOfFiles) {
+            TotalProjectsNumber++;
+            File inFolder = new File(file.getPath());
+            File[] inListOfFiles = inFolder.listFiles();
+            for (File inFile : inListOfFiles) {
+                try {
+                    if (inFile.getName().contains(".zip")) {
+                        exploreZip(inFile.getPath());
+                    } else {
+                        ErrorExceptionsList.add(new WrongFileExtensionException(inFile));
                     }
+                } catch (Exception e) {
+                    ErrorExceptionsList.add(new WrongFileExtensionException(e.getMessage()));
                 }
             }
+        }
     }
 
     public String getErrorMessagesReport(){
@@ -178,8 +176,6 @@ public class ArchiveOperator {
             sourceFile.addSourceLine(new SourceLine(currentLine, lineIndex));
             lineIndex++;
         }
-
-        sourceFile.extractPureSource();
 
         SourceFilesList.add(sourceFile);
     }

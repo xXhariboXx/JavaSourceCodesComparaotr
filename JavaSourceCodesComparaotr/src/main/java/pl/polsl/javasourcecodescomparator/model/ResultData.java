@@ -13,6 +13,36 @@ import java.util.Map;
  * @version 0.5
  */
 public class ResultData {
+
+    /**
+     * Class to contain numerical data of compared files
+     *
+     * @author Dominik Rączka
+     * @version 0.9
+     */
+    public class AccuracyData{
+        private int TotalLinesNumberInOriginFile;
+        private int TotalLinesNumberInComparedFile;
+        private int MatchingLinesNumber;
+        private double SimilarityPercentage;
+
+        private void calculateSimilarityPercentage(){
+            SimilarityPercentage = (MatchingLinesNumber * 1.0)/(TotalLinesNumberInOriginFile * 1.0) * (100 * 1.0);
+        }
+
+        @Override
+        public String toString() {
+            String result = "";
+
+            result += "Accuracy data report: \n";
+            result += "\tTotal important source lines in origin file: " + TotalLinesNumberInOriginFile + "\n";
+            result += "\tTotal important source lines in compared file: " + TotalLinesNumberInComparedFile + "\n";
+            result += "\tMatched lines number: " + MatchingLinesNumber + "\n";
+            result += "\tSimilarity: " + String.format("%.2f", SimilarityPercentage) + "%";
+
+            return result;
+        }
+    }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Class public fields
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -23,6 +53,7 @@ public class ResultData {
     /**
      * List of similar sources
      */
+    @Deprecated
     public List<String> SimilarSourcesList;
     /**
      * Map that holds all matched lines from every matched source file with info about the source file
@@ -32,10 +63,13 @@ public class ResultData {
      *
      */
     public Map<SourceFileInfo, List<MatchedLine>> LongestCommonPartsMap;
+
+    public Map<SourceFileInfo, AccuracyData> AccuracyDataMap;
     /**
      * Length of longest line - for showing debug results
      */
     private int LongestLineLength;
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructors
@@ -47,6 +81,7 @@ public class ResultData {
         SimilarSourcesList = new ArrayList<>();
         MatchingLinesMap = new HashMap<>();
         LongestCommonPartsMap = new HashMap<>();
+        AccuracyDataMap = new HashMap<>();
         this.LongestLineLength = 0;
     }
 
@@ -133,6 +168,18 @@ public class ResultData {
         return bHaveMatchingLines;
     }
 
+    public void calculateNumericalResultData(SourceCodeFile originFile, SourceCodeFile comparedFile){
+        AccuracyData accuracyData = new AccuracyData();
+
+        accuracyData.TotalLinesNumberInOriginFile = originFile.getLinesNumber();
+        accuracyData.TotalLinesNumberInComparedFile = comparedFile.getLinesNumber();
+        accuracyData.MatchingLinesNumber = MatchingLinesMap.get(comparedFile.getSourceFileInfo()).size();
+        accuracyData.calculateSimilarityPercentage();
+
+        AccuracyDataMap.put(comparedFile.getSourceFileInfo(), accuracyData);
+
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Public override methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -147,6 +194,7 @@ public class ResultData {
                 matchedLine.LongestLineLength = LongestLineLength;
                 result += matchedLine.toString() + "\n";
             }
+            result += AccuracyDataMap.get(similarSource).toString() + "\n";
         }
 
         return result;
@@ -162,18 +210,19 @@ public class ResultData {
      */
     private List<MatchedLine> clearGarbageResultsFromSourceFile(List<MatchedLine> matchedLines){
         List<MatchedLine> nonGarbageLines = new ArrayList<>();
-        MatchedLine previousMatchedLine = new MatchedLine();
+//        MatchedLine previousMatchedLine = new MatchedLine();
 
         for(MatchedLine line : matchedLines){
-            if(previousMatchedLine.OriginLineNumber == -1) {
-                previousMatchedLine = line;
-            }
+//            if(previousMatchedLine.OriginLineNumber == -1) {
+//                previousMatchedLine = line;
+//            }
 
-            if((previousMatchedLine.OriginLineNumber == (line.OriginLineNumber - 1)) || !line.iSGarbage()) {
+            //if((previousMatchedLine.OriginLineNumber == (line.OriginLineNumber - 1)) || !line.iSGarbage()) {
+            if(!line.iSGarbage()){
                 nonGarbageLines.add(line);
             }
 
-            previousMatchedLine = line;
+            //previousMatchedLine = line;
         }
 
         return nonGarbageLines;

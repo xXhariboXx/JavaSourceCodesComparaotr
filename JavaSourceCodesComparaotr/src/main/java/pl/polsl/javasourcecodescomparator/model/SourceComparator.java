@@ -63,7 +63,7 @@ public class SourceComparator {
      */
     public void comparePureSources(){
         for(SourceCodeFile sourceCodeFile : SourceFilesToCompareList){
-            sourceCodeFile.extractPureSource();
+            //sourceCodeFile.extractPureSource();
             compareFileWithOthersPureSource(sourceCodeFile);
         }
         clearGarbage();
@@ -115,12 +115,12 @@ public class SourceComparator {
             ResultData resultData = new ResultData();
             resultData.OriginSource = originSourceCodeFile.getSourceFileInfo();
             if(!areSourcesFromTheSameProject(originSourceCodeFile, sourceFile) && !areSourcesTheSameVersion(originSourceCodeFile, sourceFile)){
+
                 resultData.SimilarSourcesList.add(sourceFile.getSourceFileInfo().FileName);
-                if(resultData.MatchingLinesMap.containsKey(sourceFile.getSourceFileInfo())){
-                    resultData.MatchingLinesMap.get(sourceFile.getSourceFileInfo()).addAll(compareCodeFiles(originSourceCodeFile, sourceFile));
-                } else{
-                    resultData.MatchingLinesMap.put(sourceFile.getSourceFileInfo(), compareCodeFiles(originSourceCodeFile, sourceFile));
-                }
+
+                resultData.MatchingLinesMap.put(sourceFile.getSourceFileInfo(), compareCodeFiles(originSourceCodeFile, sourceFile));
+                resultData.calculateNumericalResultData(originSourceCodeFile, sourceFile);
+
                 ResultDataList.add(resultData);
             }
         }

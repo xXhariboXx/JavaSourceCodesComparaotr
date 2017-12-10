@@ -83,7 +83,7 @@ public class MatchedLine {
         while((LineContent.length() + result.length()) < LongestLineLength){
             result += " ";
         }
-        result += "; Line number in origin file: " + OriginLineNumber.toString() + ", line number in compared file: " + ComparedLineNumber.toString();
+        result += "|Line number in origin file: " + OriginLineNumber.toString() + ", line number in compared file: " + ComparedLineNumber.toString();
 
         return result;
     }

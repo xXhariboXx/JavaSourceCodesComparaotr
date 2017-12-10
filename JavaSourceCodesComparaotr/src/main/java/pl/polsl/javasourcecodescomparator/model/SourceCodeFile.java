@@ -108,7 +108,9 @@ public class SourceCodeFile {
      */
     public void addSourceLine(SourceLine sourceLine){
         parseInfo(sourceLine.SourceLineContent);
-        SourceLinesList.add(sourceLine);
+        if(sourceLine.processSourceLine()){
+            SourceLinesList.add(sourceLine);
+        }
         LinesNumber = SourceLinesList.size();
     }
 
@@ -128,6 +130,19 @@ public class SourceCodeFile {
                 PureSourceLinesList.add(sourceLine);
             }
         }
+    }
+
+    public void clearEmptyLines(){
+        List<SourceLine> listToSave = new ArrayList<>();
+
+        for(SourceLine sourceLine : SourceLinesList){
+            if(sourceLine.SourceLineContent.length() != 0){
+                listToSave.add(sourceLine);
+            }
+        }
+
+        SourceLinesList.clear();
+        SourceLinesList.addAll(listToSave);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
