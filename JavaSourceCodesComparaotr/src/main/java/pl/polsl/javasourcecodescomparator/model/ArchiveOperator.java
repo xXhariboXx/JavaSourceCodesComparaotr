@@ -182,7 +182,7 @@ public class ArchiveOperator {
      * @param stream stream with .java file
      * @throws IOException
      */
-    private void copySource(InputStream stream, String projectName, String sourceFileName) throws IOException {
+    private void copySource(InputStream stream, String projectName, String sourceFileName) throws Exception {
 
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
         SourceCodeFile sourceFile = new SourceCodeFile();
@@ -209,10 +209,15 @@ public class ArchiveOperator {
      * @return project name
      */
     private String extractProjectName(String directoryPath){
-        String projectName = "";
+        String projectName = "none";
 
-        projectName = directoryPath.substring(0, directoryPath.length() - 1);
-        projectName = projectName.substring(0, projectName.indexOf("/"));
+        if(directoryPath.length() > 0) {
+            projectName = directoryPath.substring(0, directoryPath.length() - 1);
+        }
+
+        if(projectName.contains("/")) {
+            projectName = projectName.substring(0, projectName.indexOf("/"));
+        }
 
         return  projectName;
     }
@@ -223,9 +228,11 @@ public class ArchiveOperator {
      * @return source file name
      */
     private String extractSourceFileName(String filePath){
-        String sourceFilename = "";
+        String sourceFilename = "none";
 
-        sourceFilename = filePath.substring(filePath.lastIndexOf("/") + 1);
+        if(filePath.contains("/")) {
+            sourceFilename = filePath.substring(filePath.lastIndexOf("/") + 1);
+        }
 
         return sourceFilename;
     }
