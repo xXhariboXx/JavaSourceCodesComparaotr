@@ -70,6 +70,7 @@ public class Controller {
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.pack();
         mainFrame.setVisible(true);
+        mainView.getSimilarityPercentageTextField().setText(String.valueOf(sourceComparator.getMinimumSimilarityPercentage()));
     }
 
     private void initializeFields(){
@@ -83,33 +84,59 @@ public class Controller {
         DirectoryPath = pathToDirectory.replaceAll(".zip", "");
 
         if (!DirectoryPath.equals("none")) {
-            archiveOperator.readArchive(pathToDirectory);
+            if(archiveOperator.readArchive(pathToDirectory)) {
+                printExceptions();
+                System.out.println(archiveOperator.getProjectsNamesString());
+                System.out.println(archiveOperator.getErrorMessagesReport());
 
-            System.out.println(archiveOperator.getProjectsNamesString());
-            System.out.println(archiveOperator.getErrorMessagesReport());
+                sourceComparator.setMinimumSimilarityPercentage(mainView.getSimilarityPercentageTextField().getText());
+                sourceComparator.setSourceFilesToCompareList(archiveOperator.getSourceFilesList());
+                sourceComparator.compareAllFiles();
 
-            sourceComparator.setMinimumSimilarityPercentage(mainView.getSimilarityPercentageTextField().getText());
-            sourceComparator.setSourceFilesToCompareList(archiveOperator.getSourceFilesList());
-            sourceComparator.compareAllFiles();
-
-            System.out.println(sourceComparator.getTotalResultString());
-            printReport();
+                System.out.println(sourceComparator.getTotalResultString());
+                printReport();
+                Object[] options = {"Yes",
+                        "No, exit program"};
+                int n = JOptionPane.showOptionDialog(mainFrame,
+                        "Files comparison completed! \nWould you like to continue",
+                        "Comparison completed",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        options,
+                        options[1]);
+                if (n == JOptionPane.NO_OPTION) {
+                    System.exit(0);
+                }
+            }
+            else{
+                JOptionPane.showMessageDialog(mainFrame, "Input file invalid");
+            }
         } else {
+            JOptionPane.showMessageDialog(mainFrame, "Wrong input arguments");
             System.out.println("Wrong input arguments");
         }
     }
 
+    private void printExceptions(){
+        String exceptionsString = "No errors!";
+
+        if(!archiveOperator.getErrorMessagesReport().isEmpty()) {
+            exceptionsString = archiveOperator.getErrorMessagesReport();
+        }
+        JOptionPane.showMessageDialog(mainFrame, exceptionsString);
+    }
+
     private void printReport(){
         PrintWriter fileHandler = null;
-        try
-        {
+
+        try {
             fileHandler = new PrintWriter(DirectoryPath + ".txt");
         }catch (Exception e)
         {
-            JOptionPane.showMessageDialog(mainFrame, "File writting failure");
+            JOptionPane.showMessageDialog(mainFrame, "File writing failure");
             return;
         }
-
 
         fileHandler.write(sourceComparator.getTotalResultString().replaceAll("\n", "\r\n"));
         fileHandler.close();

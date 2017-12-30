@@ -14,7 +14,7 @@ import net.lingala.zip4j.exception.ZipException;
  * Class to process package and list all projects inside it
  *
  * @author Dominik Rączka
- * @version 0.9
+ * @version 1.0
  */
 public class ArchiveOperator {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,26 +70,34 @@ public class ArchiveOperator {
      *
      * @param archivePath path to folder with projects
      */
-    public void readArchive(String archivePath) {
-        File folder = new File(unZipDirectory((archivePath)));
-        File[] listOfFiles = folder.listFiles();
+    public boolean readArchive(String archivePath) {
+        boolean result = false;
 
-        for (File file : listOfFiles) {
-            TotalProjectsNumber++;
-            File inFolder = new File(file.getPath());
-            File[] inListOfFiles = inFolder.listFiles();
-            for (File inFile : inListOfFiles) {
-                try {
-                    if (inFile.getName().contains(".zip")) {
-                        exploreZip(inFile.getPath());
-                    } else {
-                        ErrorExceptionsList.add(new WrongFileExtensionException(inFile));
+        if(archivePath.contains(".zip")) {
+            File folder = new File(unZipDirectory((archivePath)));
+            File[] listOfFiles = folder.listFiles();
+
+            for (File file : listOfFiles) {
+                TotalProjectsNumber++;
+                File inFolder = new File(file.getPath());
+                File[] inListOfFiles = inFolder.listFiles();
+                for (File inFile : inListOfFiles) {
+                    try {
+                        if (inFile.getName().contains(".zip")) {
+                            exploreZip(inFile.getPath());
+                        } else {
+                            ErrorExceptionsList.add(new WrongFileExtensionException(inFile));
+                        }
+                    } catch (Exception e) {
+                        ErrorExceptionsList.add(new WrongFileExtensionException(e.getMessage()));
                     }
-                } catch (Exception e) {
-                    ErrorExceptionsList.add(new WrongFileExtensionException(e.getMessage()));
                 }
             }
+
+            result = true;
         }
+
+        return result;
     }
 
     /**

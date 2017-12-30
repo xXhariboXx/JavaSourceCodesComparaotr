@@ -60,6 +60,7 @@ public class SourceComparator {
     public SourceComparator(){
         SourceFilesToCompareList = new ArrayList<>();
         ResultDataList = new ArrayList<>();
+        MinimumSimilarityPercentage = 10.0;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
