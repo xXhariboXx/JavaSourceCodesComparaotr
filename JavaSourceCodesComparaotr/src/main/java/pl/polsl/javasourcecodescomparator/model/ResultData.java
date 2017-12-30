@@ -1,10 +1,7 @@
 package pl.polsl.javasourcecodescomparator.model;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class that represents result data from comparing files
@@ -20,7 +17,7 @@ public class ResultData {
      * @author Dominik Rączka
      * @version 0.9
      */
-    public class AccuracyData{
+    public class AccuracyData implements Comparable<AccuracyData>{
         /**
          * Number of lines of important code in source file
          */
@@ -36,7 +33,7 @@ public class ResultData {
         /**
          * Percentage of how much origin file is similar to compared file
          */
-        private double SimilarityPercentage;
+        private Double SimilarityPercentage;
 
         /**
          * Calculates SimilarityPercentage
@@ -64,6 +61,11 @@ public class ResultData {
 
             return result;
         }
+
+        @Override
+        public int compareTo(AccuracyData objectToCompare){
+            return this.SimilarityPercentage.compareTo(objectToCompare.SimilarityPercentage);
+        }
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Class public fields
@@ -75,11 +77,11 @@ public class ResultData {
     /**
      * Map that holds all matched lines from every matched source file with info about the source file
      */
-    public Map<SourceFileInfo, List<MatchedLine>> MatchingLinesMap;
+    public LinkedHashMap<SourceFileInfo, List<MatchedLine>> MatchingLinesMap;
     /**
      * Map that hold numerical data about similarity
      */
-    public Map<SourceFileInfo, AccuracyData> AccuracyDataMap;
+    public LinkedHashMap<SourceFileInfo, AccuracyData> AccuracyDataMap;
     /**
      * Length of longest line - for showing debug results
      */
@@ -93,8 +95,8 @@ public class ResultData {
      * Empty constructor. Initializes object
      */
     public ResultData(){
-        MatchingLinesMap = new HashMap<>();
-        AccuracyDataMap = new HashMap<>();
+        MatchingLinesMap = new LinkedHashMap<>();
+        AccuracyDataMap = new LinkedHashMap<>();
         this.LongestLineLength = 0;
     }
 
@@ -180,9 +182,10 @@ public class ResultData {
     public String toString() {
         String result = "";
 
-        result += "Origin source:\n" + OriginSource.toString() + "\n";
+        result += "\n*********************************************************\n";
+        result += "*Origin source:\n" + OriginSource.toString() + "\n\n";
         for(SourceFileInfo similarSource : MatchingLinesMap.keySet()){
-            result += "Similar source:\n" + similarSource.toString() + "\n";
+            result += "\n*Similar source:\n" + similarSource.toString() + "\n";
             for(MatchedLine matchedLine : MatchingLinesMap.get(similarSource)){
                 matchedLine.LongestLineLength = LongestLineLength;
                 result += matchedLine.toString() + "\n";
@@ -218,15 +221,48 @@ public class ResultData {
      * @param similarityPercentage minimum percentage to call files similar
      */
     private void clearAccuracyData(double similarityPercentage){
-        Map<SourceFileInfo, AccuracyData> resultsToSave = new HashMap<>();
+        Map<SourceFileInfo, AccuracyData> accuracyResultsToSave = new HashMap<>();
 
         for(Map.Entry<SourceFileInfo, AccuracyData> entry : AccuracyDataMap.entrySet()){
             if(entry.getValue().isEquallySized() && entry.getValue().SimilarityPercentage >= similarityPercentage){
-                resultsToSave.put(entry.getKey(), entry.getValue());
+                accuracyResultsToSave.put(entry.getKey(), entry.getValue());
             }
         }
 
         AccuracyDataMap.clear();
-        AccuracyDataMap.putAll(resultsToSave);
+        accuracyResultsToSave = sortByValues(accuracyResultsToSave);
+        for(Map.Entry<SourceFileInfo, AccuracyData> entry : accuracyResultsToSave.entrySet()){
+                AccuracyDataMap.put(entry.getKey(), entry.getValue());
+        }
+        synchronizeMaps();
+    }
+
+    private LinkedHashMap sortByValues(Map mapToSort) {
+        List list = new LinkedList(mapToSort.entrySet());
+
+        Collections.sort(list, new Comparator() {
+            public int compare(Object o1, Object o2) {
+                return ((Comparable) ((Map.Entry) (o1)).getValue())
+                        .compareTo(((Map.Entry) (o2)).getValue());
+            }
+        });
+
+        LinkedHashMap sortedHashMap = new LinkedHashMap();
+        for (Iterator it = list.iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry) it.next();
+            sortedHashMap.put(entry.getKey(), entry.getValue());
+        }
+        return sortedHashMap;
+    }
+
+    private void synchronizeMaps(){
+        Map<SourceFileInfo, List<MatchedLine>> finalMatchedLinesResults = new LinkedHashMap<>();
+
+        for(Map.Entry<SourceFileInfo, AccuracyData> entry : AccuracyDataMap.entrySet()){
+            finalMatchedLinesResults.put(entry.getKey(), MatchingLinesMap.get(entry.getKey()));
+        }
+
+        MatchingLinesMap.clear();
+        MatchingLinesMap.putAll(finalMatchedLinesResults);
     }
 }

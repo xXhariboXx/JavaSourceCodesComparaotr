@@ -98,17 +98,21 @@ public class SourceComparator {
      * @param originSourceCodeFile file to compare with others
      */
     private void compareFileWithOthers(SourceCodeFile originSourceCodeFile){
+        ResultData resultData = new ResultData();
+        resultData.OriginSource = originSourceCodeFile.getSourceFileInfo();
+
         for(SourceCodeFile sourceFile : SourceFilesToCompareList){
-            ResultData resultData = new ResultData();
-            resultData.OriginSource = originSourceCodeFile.getSourceFileInfo();
             if(!areSourcesFromTheSameProject(originSourceCodeFile, sourceFile) && !areSourcesTheSameVersion(originSourceCodeFile, sourceFile) && !originSourceCodeFile.getSourceFileInfo().AuthorName.equals(sourceFile.getSourceFileInfo().AuthorName)){
 
-                resultData.MatchingLinesMap.put(sourceFile.getSourceFileInfo(), compareCodeFiles(originSourceCodeFile, sourceFile));
-                resultData.calculateNumericalResultData(originSourceCodeFile, sourceFile);
-
-                ResultDataList.add(resultData);
+                List<MatchedLine> matchingLines = compareCodeFiles(originSourceCodeFile, sourceFile);
+                if(matchingLines.size() > 0) {
+                    resultData.MatchingLinesMap.put(sourceFile.getSourceFileInfo(), matchingLines);
+                    resultData.calculateNumericalResultData(originSourceCodeFile, sourceFile);
+                }
             }
         }
+
+        ResultDataList.add(resultData);
     }
 
     private boolean areSourcesTheSame(SourceCodeFile originSourceCodeFile, SourceCodeFile sourceCodeFileToCompare){
