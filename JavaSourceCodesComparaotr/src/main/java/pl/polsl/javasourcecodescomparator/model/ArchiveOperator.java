@@ -1,9 +1,12 @@
 package pl.polsl.javasourcecodescomparator.model;
 
+import org.apache.commons.io.FileUtils;
 import pl.polsl.javasourcecodescomparator.exceptions.WrongFileExtensionException;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -71,6 +74,10 @@ public class ArchiveOperator {
      * @param archivePath path to folder with projects
      */
     public boolean readArchive(String archivePath) {
+        ErrorExceptionsList.clear();
+        SourceFilesList.clear();
+        ProjectsNamesList.clear();
+        TotalProjectsNumber = 0;
         boolean result = false;
 
         if(archivePath.contains(".zip")) {
@@ -146,6 +153,14 @@ public class ArchiveOperator {
             net.lingala.zip4j.core.ZipFile zipFile = new net.lingala.zip4j.core.ZipFile(pathToDirectory);
 
             String pathToUnzip = pathToDirectory.replaceAll(".zip", "");
+
+            try {
+                if (Files.isDirectory(Paths.get(pathToUnzip))) {
+                    FileUtils.deleteDirectory(new File(pathToUnzip));
+                }
+            } catch(Exception e){
+
+            }
 
             zipFile.extractAll(pathToUnzip);
 

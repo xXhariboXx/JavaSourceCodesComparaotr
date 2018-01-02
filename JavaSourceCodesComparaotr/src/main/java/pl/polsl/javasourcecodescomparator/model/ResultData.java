@@ -64,7 +64,7 @@ public class ResultData {
 
         @Override
         public int compareTo(AccuracyData objectToCompare){
-            return this.SimilarityPercentage.compareTo(objectToCompare.SimilarityPercentage);
+            return -1*this.SimilarityPercentage.compareTo(objectToCompare.SimilarityPercentage);
         }
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -166,7 +166,7 @@ public class ResultData {
     void calculateNumericalResultData(SourceCodeFile originFile, SourceCodeFile comparedFile){
         AccuracyData accuracyData = new AccuracyData();
 
-        accuracyData.TotalLinesNumberInOriginFile = originFile.getLinesNumber();
+        accuracyData.TotalLinesNumberInOriginFile = originFile.getSourceLinesList().size();
         accuracyData.TotalLinesNumberInComparedFile = comparedFile.getLinesNumber();
         accuracyData.MatchingLinesNumber = MatchingLinesMap.get(comparedFile.getSourceFileInfo()).size();
         accuracyData.calculateSimilarityPercentage();
@@ -187,7 +187,7 @@ public class ResultData {
         for(SourceFileInfo similarSource : MatchingLinesMap.keySet()){
             result += "\n*Similar source:\n" + similarSource.toString() + "\n";
             for(MatchedLine matchedLine : MatchingLinesMap.get(similarSource)){
-                matchedLine.LongestLineLength = LongestLineLength;
+                matchedLine.setLongestLineLength(LongestLineLength);
                 result += matchedLine.toString() + "\n";
             }
             result += AccuracyDataMap.get(similarSource).toString() + "\n";

@@ -84,6 +84,7 @@ public class Controller {
         DirectoryPath = pathToDirectory.replaceAll(".zip", "");
 
         if (!DirectoryPath.equals("none")) {
+            sourceComparator.clearComparatorData();
             if(archiveOperator.readArchive(pathToDirectory)) {
                 printExceptions();
                 System.out.println(archiveOperator.getProjectsNamesString());
@@ -91,7 +92,7 @@ public class Controller {
 
                 sourceComparator.setMinimumSimilarityPercentage(mainView.getSimilarityPercentageTextField().getText());
                 sourceComparator.setSourceFilesToCompareList(archiveOperator.getSourceFilesList());
-                sourceComparator.compareAllFiles();
+                sourceComparator.compareAllFiles(mainView.getSameProjectCheckBox().isSelected(), mainView.getSameAuthorCheckBox().isSelected());
 
                 System.out.println(sourceComparator.getTotalResultString());
                 printReport();

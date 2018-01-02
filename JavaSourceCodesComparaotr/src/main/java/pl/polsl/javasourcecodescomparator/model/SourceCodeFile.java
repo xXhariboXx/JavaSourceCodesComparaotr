@@ -35,10 +35,6 @@ public class SourceCodeFile {
      */
     private List<SourceLine> SourceLinesList;
     /**
-     * Pure source code - only code lines
-     */
-    private List<SourceLine> PureSourceLinesList;
-    /**
      * Number of lines in source file
      */
     private int LinesNumber;
@@ -58,12 +54,6 @@ public class SourceCodeFile {
     public void setSourceLinesList(List<SourceLine> sourceLinesList) {
         SourceLinesList = sourceLinesList;
     }
-    public List<SourceLine> getPureSourceLinesList() {
-        return PureSourceLinesList;
-    }
-    public void setPureSourceLinesList(List<SourceLine> pureSourceLinesList) {
-        PureSourceLinesList = pureSourceLinesList;
-    }
     public int getLinesNumber() {
         return LinesNumber;
     }
@@ -79,7 +69,6 @@ public class SourceCodeFile {
      */
     public SourceCodeFile(){
         SourceLinesList = new ArrayList<>();
-        PureSourceLinesList = new ArrayList<>();
         LinesNumber = SourceLinesList.size();
         SourceFileInfo = new SourceFileInfo();
     }
@@ -90,14 +79,12 @@ public class SourceCodeFile {
      */
     public SourceCodeFile(List<SourceLine> listToInitialize){
         SourceLinesList = new ArrayList<>(listToInitialize);
-        PureSourceLinesList = new ArrayList<>();
 
         for(SourceLine sourceLine : listToInitialize) {
             parseInfo(sourceLine.SourceLineContent);
         }
 
         LinesNumber = SourceLinesList.size();
-        extractPureSource();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -113,24 +100,6 @@ public class SourceCodeFile {
             SourceLinesList.add(sourceLine);
         }
         LinesNumber = SourceLinesList.size();
-    }
-
-    /**
-     * Extracts "pure" code from source file
-     */
-    public void extractPureSource(){
-        for(SourceLine sourceLine : SourceLinesList){
-            String lineContent = sourceLine.SourceLineContent;
-            lineContent = lineContent.replaceAll("   ", "");
-            while(lineContent.startsWith(" ")){
-                lineContent = lineContent.substring(1);
-            }
-            if(!lineContent.startsWith("/*") && !lineContent.startsWith("*")
-                    && !lineContent.startsWith("*/") && !lineContent.startsWith("/")
-                    && (lineContent.length() != 0) && !lineContent.startsWith("@")){
-                PureSourceLinesList.add(sourceLine);
-            }
-        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

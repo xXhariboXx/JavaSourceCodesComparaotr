@@ -26,8 +26,15 @@ public class MatchedLine {
     /**
      * Length of the longest matched line in file. Used for better representing data in terminal
      */
-    public int LongestLineLength;
+    private int LongestLineLength;
 
+    public int getLongestLineLength() {
+        return LongestLineLength;
+    }
+
+    public void setLongestLineLength(int longestLineLength) {
+        LongestLineLength = longestLineLength;
+    }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructors
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

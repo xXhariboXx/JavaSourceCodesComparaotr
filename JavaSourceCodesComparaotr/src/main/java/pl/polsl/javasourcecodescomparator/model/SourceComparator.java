@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Class that performs files comparison
  * @author Dominik
- * @version 0.1
+ * @version 1.0
  */
 
 
@@ -69,11 +69,16 @@ public class SourceComparator {
     /**
      * Compare all files with all source lines
      */
-    public void compareAllFiles(){
+    public void compareAllFiles(boolean compareInProject, boolean compareTheSameAuthor){
         for(SourceCodeFile sourceFile : SourceFilesToCompareList){
-            compareFileWithOthers(sourceFile);
+            compareFileWithOthers(sourceFile, compareInProject, compareTheSameAuthor);
         }
         clearGarbage();
+    }
+
+    public void clearComparatorData(){
+        SourceFilesToCompareList.clear();
+        ResultDataList.clear();
     }
 
     /**
@@ -98,12 +103,16 @@ public class SourceComparator {
      * Compares file with other files
      * @param originSourceCodeFile file to compare with others
      */
-    private void compareFileWithOthers(SourceCodeFile originSourceCodeFile){
+    private void compareFileWithOthers(SourceCodeFile originSourceCodeFile, boolean compareInProject, boolean compareTheSameAuthor){
         ResultData resultData = new ResultData();
         resultData.OriginSource = originSourceCodeFile.getSourceFileInfo();
 
         for(SourceCodeFile sourceFile : SourceFilesToCompareList){
-            if(!areSourcesFromTheSameProject(originSourceCodeFile, sourceFile) && !areSourcesTheSameVersion(originSourceCodeFile, sourceFile) && !originSourceCodeFile.getSourceFileInfo().AuthorName.equals(sourceFile.getSourceFileInfo().AuthorName)){
+            if((!areSourcesFromTheSameProject(originSourceCodeFile, sourceFile) || compareInProject) &&
+                    !areSourcesTheSameVersion(originSourceCodeFile, sourceFile) &&
+                    (!originSourceCodeFile.getSourceFileInfo().AuthorName.equals(sourceFile.getSourceFileInfo().AuthorName)
+                            || compareTheSameAuthor)
+                    ){
 
                 List<MatchedLine> matchingLines = compareCodeFiles(originSourceCodeFile, sourceFile);
                 if(matchingLines.size() > 0) {
@@ -121,7 +130,8 @@ public class SourceComparator {
     }
 
     private  boolean areSourcesFromTheSameProject(SourceCodeFile originSourceCodeFile, SourceCodeFile sourceCodeFileToCompare){
-        return originSourceCodeFile.getSourceFileInfo().ProjectName.equals(sourceCodeFileToCompare.getSourceFileInfo().ProjectName);
+        boolean result = originSourceCodeFile.getSourceFileInfo().ProjectName.equals(sourceCodeFileToCompare.getSourceFileInfo().ProjectName);
+        return result;
     }
 
     private  boolean areSourcesTheSameVersion(SourceCodeFile originSourceCodeFile, SourceCodeFile sourceCodeFileToCompare){

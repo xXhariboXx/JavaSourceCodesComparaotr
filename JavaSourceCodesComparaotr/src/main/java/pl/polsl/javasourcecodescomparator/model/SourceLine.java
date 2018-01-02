@@ -20,7 +20,7 @@ public class SourceLine {
      */
     public String ProcessedLineContent;
     /**
-     * Indes of source line
+     * Index of source line
      */
     public int SourceLineIndex;
     /**
@@ -61,12 +61,22 @@ public class SourceLine {
         }
 
         ProcessedLineContent = SourceLineContent;
+        ProcessedLineContent.toLowerCase();
 
         if(ProcessedLineContent.contains("break")) {
             ProcessedLineContent = ProcessedLineContent.replaceAll("break;", "");
         }
+        if(ProcessedLineContent.contains("return")) {
+            ProcessedLineContent = ProcessedLineContent.replaceAll("return;", "");
+        }
         if(ProcessedLineContent.contains("@author")){
             ProcessedLineContent = ProcessedLineContent.replaceAll("@author", "");
+        }
+        if(ProcessedLineContent.contains("@test")){
+            ProcessedLineContent = ProcessedLineContent.replaceAll("@test", "");
+        }
+        if(ProcessedLineContent.contains("@override")){
+            ProcessedLineContent = ProcessedLineContent.replaceAll("@Override", "");
         }
         if(ProcessedLineContent.contains("try")){
             ProcessedLineContent = ProcessedLineContent.replaceAll("try", "");
@@ -91,11 +101,15 @@ public class SourceLine {
             result = false;
         } else if(ProcessedLineContent.startsWith("/**")){
             result = false;
+        } else if(ProcessedLineContent.startsWith("/*")){
+            result = false;
         } else if(ProcessedLineContent.startsWith("*/")){
             result = false;
         } else if (ProcessedLineContent.startsWith("*")){
             result = false;
         } else if(ProcessedLineContent.contains("import")) {
+            result = false;
+        } else if(ProcessedLineContent.contains("package")) {
             result = false;
         } else if(ProcessedLineContent.length() == 1 && ProcessedLineContent.equals(";")){
             result = false;
