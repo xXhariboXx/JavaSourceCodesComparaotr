@@ -10,41 +10,70 @@ import java.awt.event.ActionListener;
 import java.io.PrintWriter;
 
 /**
- *
- * @author Dominik
- * @version 0.9
+ * Controller class of application. Controls workflow of all modules
+ * @author Dominik Rączka
+ * @version 1.0
  */
-
 public class Controller {
-
+    /**
+     * ArchiveOperator object to read input file
+     */
     private ArchiveOperator archiveOperator;
+    /**
+     * SourceComparator object to make comparison
+     */
     private SourceComparator sourceComparator;
+    /**
+     * Main view of application
+     */
     private MainView mainView;
+    /**
+     * Main frame of application
+     */
     private JFrame mainFrame;
-    private String DirectoryPath;
+    /**
+     * Path to directory to process
+     */
+    private String directoryPath;
+    /**
+     * Action listener
+     */
     private ActionListener actionListener;
 
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Constructors
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Default empty constructor. Initialize all fields
+     */
     public Controller(){
         initializeFields();
     }
-
+    /**
+     * Constructor with command line arguments.
+     * @param args Args can set default directoryPath
+     */
     public Controller(String[] args){
         initializeFields();
 
         if(args.length == 1){
-            DirectoryPath = args[0];
+            directoryPath = args[0];
         } else {
-            DirectoryPath = "none";
+            directoryPath = "none";
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Public methods
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Main loop of application
+     */
     public void run(){
         try {
-            //archiveOperator.readArchive("F:\\GIT foldery\\JavaSourceCodesComparator\\JAVA_SSI-r1--19975");
-            //operator.readArchive("F:\\TestFolder");
             createJFrame();
-            actionListener = new ActionListener()
-            {
+            actionListener = new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent actionEvent)
                 {
@@ -58,12 +87,17 @@ public class Controller {
                 }
             };
             mainView.getFileChooser().addActionListener(actionListener);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Private methods
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Creates new main frame
+     */
     private void createJFrame(){
         mainFrame = new JFrame("Source comparator");
         mainFrame.setContentPane(mainView.getMainPanel());
@@ -72,18 +106,23 @@ public class Controller {
         mainFrame.setVisible(true);
         mainView.getSimilarityPercentageTextField().setText(String.valueOf(sourceComparator.getMinimumSimilarityPercentage()));
     }
-
+    /**
+     * Initialize all fields and objects
+     */
     private void initializeFields(){
         archiveOperator = new ArchiveOperator();
         sourceComparator = new SourceComparator();
         mainView = new MainView();
-        DirectoryPath = "none";
+        directoryPath = "none";
     }
-
+    /**
+     * Reads input fiels and compare sources inside it
+     * @param pathToDirectory path to input ZIP file
+     */
     private void compareSources(String pathToDirectory) {
-        DirectoryPath = pathToDirectory.replaceAll(".zip", "");
+        directoryPath = pathToDirectory.replaceAll(".zip", "");
 
-        if (!DirectoryPath.equals("none")) {
+        if (!directoryPath.equals("none")) {
             sourceComparator.clearComparatorData();
             if(archiveOperator.readArchive(pathToDirectory)) {
                 printExceptions();
@@ -91,7 +130,7 @@ public class Controller {
                 System.out.println(archiveOperator.getErrorMessagesReport());
 
                 sourceComparator.setMinimumSimilarityPercentage(mainView.getSimilarityPercentageTextField().getText());
-                sourceComparator.setSourceFilesToCompareList(archiveOperator.getSourceFilesList());
+                sourceComparator.setSourceFilesToCompareList(archiveOperator.getSourceCodeFiles());
                 sourceComparator.compareAllFiles(mainView.getSameProjectCheckBox().isSelected(), mainView.getSameAuthorCheckBox().isSelected());
 
                 System.out.println(sourceComparator.getTotalResultString());
@@ -118,7 +157,9 @@ public class Controller {
             System.out.println("Wrong input arguments");
         }
     }
-
+    /**
+     * Prints data reading exceptions report
+     */
     private void printExceptions(){
         String exceptionsString = "No errors!";
 
@@ -127,12 +168,14 @@ public class Controller {
         }
         JOptionPane.showMessageDialog(mainFrame, exceptionsString);
     }
-
+    /**
+     * Print final comparison report
+     */
     private void printReport(){
         PrintWriter fileHandler = null;
 
         try {
-            fileHandler = new PrintWriter(DirectoryPath + ".txt");
+            fileHandler = new PrintWriter(directoryPath + ".txt");
         }catch (Exception e)
         {
             JOptionPane.showMessageDialog(mainFrame, "File writing failure");

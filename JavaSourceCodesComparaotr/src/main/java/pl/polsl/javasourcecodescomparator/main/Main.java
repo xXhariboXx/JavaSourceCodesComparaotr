@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package pl.polsl.javasourcecodescomparator.main;
 
 import pl.polsl.javasourcecodescomparator.controller.Controller;
@@ -10,12 +5,13 @@ import pl.polsl.javasourcecodescomparator.controller.Controller;
 import javax.swing.*;
 
 /**
- *
- * @author Dominik
- * @version 0.9
+ * Main class of application
+ * @author Dominik Rączka
+ * @version 1.0
  */
 public class Main {
       /**
+       * Main function of application
      * @param args the command line arguments
      */
     public static void main(String[] args) {
@@ -24,7 +20,7 @@ public class Main {
             @Override
             public void run()
             {
-                Controller controller = new Controller(args);
+                Controller controller = new Controller();
                 controller.run();
             }
         });

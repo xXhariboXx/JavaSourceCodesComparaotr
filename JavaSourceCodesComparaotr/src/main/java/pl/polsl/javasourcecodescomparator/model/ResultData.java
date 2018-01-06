@@ -7,7 +7,7 @@ import java.util.*;
  * Class that represents result data from comparing files
  *
  * @author Dominik Rączka
- * @version 0.9
+ * @version 1.0
  */
 public class ResultData {
 
@@ -15,56 +15,66 @@ public class ResultData {
      * Class to contain numerical data of compared files
      *
      * @author Dominik Rączka
-     * @version 0.9
+     * @version 1.0
      */
     public class AccuracyData implements Comparable<AccuracyData>{
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Class private fields
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /**
          * Number of lines of important code in source file
          */
-        private int TotalLinesNumberInOriginFile;
+        private int totalLinesNumberInOriginFile;
         /**
          * Number of lines of important code in compared file
          */
-        private int TotalLinesNumberInComparedFile;
+        private int totalLinesNumberInComparedFile;
         /**
          * Number of matching lines between two files
          */
-        private int MatchingLinesNumber;
+        private int matchingLinesNumber;
         /**
          * Percentage of how much origin file is similar to compared file
          */
-        private Double SimilarityPercentage;
+        private Double similarityPercentage;
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Class private methods
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /**
-         * Calculates SimilarityPercentage
+         * Calculates similarityPercentage
          */
         private void calculateSimilarityPercentage(){
-            SimilarityPercentage = (MatchingLinesNumber * 1.0)/(TotalLinesNumberInOriginFile * 1.0) * (100 * 1.0);
+            similarityPercentage = (matchingLinesNumber * 1.0)/(totalLinesNumberInOriginFile * 1.0) * (100 * 1.0);
         }
         /**
          * Checks if origin source and compared source are similar size
          * @return true if are similar size (not bigger than 5 times difference)
          */
         private boolean isEquallySized(){
-            return TotalLinesNumberInOriginFile*5 > TotalLinesNumberInComparedFile || TotalLinesNumberInComparedFile*5 < TotalLinesNumberInOriginFile;
+            return totalLinesNumberInOriginFile *5 > totalLinesNumberInComparedFile || totalLinesNumberInComparedFile *5 < totalLinesNumberInOriginFile;
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Public override methods
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         @Override
         public String toString() {
             String result = "";
 
             result += "Accuracy data report: \n";
-            result += "\tTotal important source lines in origin file: " + TotalLinesNumberInOriginFile + "\n";
-            result += "\tTotal important source lines in compared file: " + TotalLinesNumberInComparedFile + "\n";
-            result += "\tMatched lines number: " + MatchingLinesNumber + "\n";
-            result += "\tSimilarity: " + String.format("%.2f", SimilarityPercentage) + "%";
+            result += "\tTotal important source lines in origin file: " + totalLinesNumberInOriginFile + "\n";
+            result += "\tTotal important source lines in compared file: " + totalLinesNumberInComparedFile + "\n";
+            result += "\tMatched lines number: " + matchingLinesNumber + "\n";
+            result += "\tSimilarity: " + String.format("%.2f", similarityPercentage) + "%";
 
             return result;
         }
 
         @Override
         public int compareTo(AccuracyData objectToCompare){
-            return -1*this.SimilarityPercentage.compareTo(objectToCompare.SimilarityPercentage);
+            return -1*this.similarityPercentage.compareTo(objectToCompare.similarityPercentage);
         }
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -73,19 +83,19 @@ public class ResultData {
     /**
      * Information about origin source
      */
-    public SourceFileInfo OriginSource;
+    public SourceFileInfo originSource;
     /**
      * Map that holds all matched lines from every matched source file with info about the source file
      */
-    public LinkedHashMap<SourceFileInfo, List<MatchedLine>> MatchingLinesMap;
+    public LinkedHashMap<SourceFileInfo, List<MatchedLine>> matchingLinesMap;
     /**
      * Map that hold numerical data about similarity
      */
-    public LinkedHashMap<SourceFileInfo, AccuracyData> AccuracyDataMap;
+    public LinkedHashMap<SourceFileInfo, AccuracyData> accuracyDataMap;
     /**
      * Length of longest line - for showing debug results
      */
-    private int LongestLineLength;
+    private int longestLineLength;
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -95,9 +105,9 @@ public class ResultData {
      * Empty constructor. Initializes object
      */
     public ResultData(){
-        MatchingLinesMap = new LinkedHashMap<>();
-        AccuracyDataMap = new LinkedHashMap<>();
-        this.LongestLineLength = 0;
+        matchingLinesMap = new LinkedHashMap<>();
+        accuracyDataMap = new LinkedHashMap<>();
+        this.longestLineLength = 0;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -111,10 +121,10 @@ public class ResultData {
      * Finds longest line in file
      */
     void findLongestLineLength(){
-        for(SourceFileInfo similarSource : MatchingLinesMap.keySet()) {
-            for(MatchedLine matchedLine : MatchingLinesMap.get(similarSource)) {
-                if (matchedLine.LineContent.length() > LongestLineLength) {
-                    LongestLineLength = matchedLine.LineContent.length();
+        for(SourceFileInfo similarSource : matchingLinesMap.keySet()) {
+            for(MatchedLine matchedLine : matchingLinesMap.get(similarSource)) {
+                if (matchedLine.lineContent.length() > longestLineLength) {
+                    longestLineLength = matchedLine.lineContent.length();
                 }
             }
         }
@@ -123,7 +133,7 @@ public class ResultData {
      * Clears garbage compared files
      */
     void clearGarbageResults(){
-        for(Map.Entry<SourceFileInfo, List<MatchedLine>> entry : MatchingLinesMap.entrySet()){
+        for(Map.Entry<SourceFileInfo, List<MatchedLine>> entry : matchingLinesMap.entrySet()){
             entry.setValue(clearGarbageResultsFromSourceFile(entry.getValue()));
         }
     }
@@ -134,7 +144,7 @@ public class ResultData {
     boolean haveMatchingLines(){
         boolean bHaveMatchingLines = false;
 
-        for(Map.Entry<SourceFileInfo, List<MatchedLine>> entry : MatchingLinesMap.entrySet()){
+        for(Map.Entry<SourceFileInfo, List<MatchedLine>> entry : matchingLinesMap.entrySet()){
             if(entry.getValue().size() > 0){
                 bHaveMatchingLines = true;
             }
@@ -152,7 +162,7 @@ public class ResultData {
         boolean result = false;
 
         clearAccuracyData(similarityPercentage);
-        if(AccuracyDataMap.size() > 0){
+        if(accuracyDataMap.size() > 0){
             result = true;
         }
 
@@ -166,12 +176,12 @@ public class ResultData {
     void calculateNumericalResultData(SourceCodeFile originFile, SourceCodeFile comparedFile){
         AccuracyData accuracyData = new AccuracyData();
 
-        accuracyData.TotalLinesNumberInOriginFile = originFile.getSourceLinesList().size();
-        accuracyData.TotalLinesNumberInComparedFile = comparedFile.getLinesNumber();
-        accuracyData.MatchingLinesNumber = MatchingLinesMap.get(comparedFile.getSourceFileInfo()).size();
+        accuracyData.totalLinesNumberInOriginFile = originFile.getSourceLinesList().size();
+        accuracyData.totalLinesNumberInComparedFile = comparedFile.getLinesNumber();
+        accuracyData.matchingLinesNumber = matchingLinesMap.get(comparedFile.getSourceFileInfo()).size();
         accuracyData.calculateSimilarityPercentage();
 
-        AccuracyDataMap.put(comparedFile.getSourceFileInfo(), accuracyData);
+        accuracyDataMap.put(comparedFile.getSourceFileInfo(), accuracyData);
 
     }
 
@@ -183,14 +193,14 @@ public class ResultData {
         String result = "";
 
         result += "\n*********************************************************\n";
-        result += "*Origin source:\n" + OriginSource.toString() + "\n\n";
-        for(SourceFileInfo similarSource : MatchingLinesMap.keySet()){
+        result += "*Origin source:\n" + originSource.toString() + "\n\n";
+        for(SourceFileInfo similarSource : matchingLinesMap.keySet()){
             result += "\n*Similar source:\n" + similarSource.toString() + "\n";
-            for(MatchedLine matchedLine : MatchingLinesMap.get(similarSource)){
-                matchedLine.setLongestLineLength(LongestLineLength);
+            for(MatchedLine matchedLine : matchingLinesMap.get(similarSource)){
+                matchedLine.setLongestLineLength(longestLineLength);
                 result += matchedLine.toString() + "\n";
             }
-            result += AccuracyDataMap.get(similarSource).toString() + "\n";
+            result += accuracyDataMap.get(similarSource).toString() + "\n";
         }
 
         return result;
@@ -223,16 +233,16 @@ public class ResultData {
     private void clearAccuracyData(double similarityPercentage){
         Map<SourceFileInfo, AccuracyData> accuracyResultsToSave = new HashMap<>();
 
-        for(Map.Entry<SourceFileInfo, AccuracyData> entry : AccuracyDataMap.entrySet()){
-            if(entry.getValue().isEquallySized() && entry.getValue().SimilarityPercentage >= similarityPercentage){
+        for(Map.Entry<SourceFileInfo, AccuracyData> entry : accuracyDataMap.entrySet()){
+            if(entry.getValue().isEquallySized() && entry.getValue().similarityPercentage >= similarityPercentage){
                 accuracyResultsToSave.put(entry.getKey(), entry.getValue());
             }
         }
 
-        AccuracyDataMap.clear();
+        accuracyDataMap.clear();
         accuracyResultsToSave = sortByValues(accuracyResultsToSave);
         for(Map.Entry<SourceFileInfo, AccuracyData> entry : accuracyResultsToSave.entrySet()){
-                AccuracyDataMap.put(entry.getKey(), entry.getValue());
+                accuracyDataMap.put(entry.getKey(), entry.getValue());
         }
         synchronizeMaps();
     }
@@ -258,11 +268,11 @@ public class ResultData {
     private void synchronizeMaps(){
         Map<SourceFileInfo, List<MatchedLine>> finalMatchedLinesResults = new LinkedHashMap<>();
 
-        for(Map.Entry<SourceFileInfo, AccuracyData> entry : AccuracyDataMap.entrySet()){
-            finalMatchedLinesResults.put(entry.getKey(), MatchingLinesMap.get(entry.getKey()));
+        for(Map.Entry<SourceFileInfo, AccuracyData> entry : accuracyDataMap.entrySet()){
+            finalMatchedLinesResults.put(entry.getKey(), matchingLinesMap.get(entry.getKey()));
         }
 
-        MatchingLinesMap.clear();
-        MatchingLinesMap.putAll(finalMatchedLinesResults);
+        matchingLinesMap.clear();
+        matchingLinesMap.putAll(finalMatchedLinesResults);
     }
 }

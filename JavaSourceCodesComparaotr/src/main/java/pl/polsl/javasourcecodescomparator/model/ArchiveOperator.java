@@ -26,34 +26,34 @@ public class ArchiveOperator {
     /**
      * All java source files from directory
      */
-    private List<SourceCodeFile> SourceFilesList;
+    private List<SourceCodeFile> sourceCodeFiles;
     /**
      * List of error messages from opening .zip files;
      */
-    private List<Exception> ErrorExceptionsList;
+    private List<Exception> errorExceptionsList;
     /**
      * List of projects name in directory
      */
-    private List<String> ProjectsNamesList;
+    private List<String> projectsNamesList;
     /**
      * Total number of projects in directory
      */
-    private int TotalProjectsNumber;
+    private int totalProjectsNumber;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Getters and setters
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public List<SourceCodeFile> getSourceFilesList() {
-        return SourceFilesList;
+    public List<SourceCodeFile> getSourceCodeFiles() {
+        return sourceCodeFiles;
     }
-    public void setSourceFilesList(List<SourceCodeFile> sourceFilesList) {
-        SourceFilesList = sourceFilesList;
+    public void setSourceCodeFiles(List<SourceCodeFile> sourceCodeFiles) {
+        this.sourceCodeFiles = sourceCodeFiles;
     }
     public List<Exception> getErrorExceptionsList() {
-        return ErrorExceptionsList;
+        return errorExceptionsList;
     }
     public void setErrorExceptionsList(List<Exception> errorExceptionsList) {
-        ErrorExceptionsList = errorExceptionsList;
+        this.errorExceptionsList = errorExceptionsList;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -63,10 +63,10 @@ public class ArchiveOperator {
      * Empty constructor. Initializes object
      */
     public ArchiveOperator(){
-        SourceFilesList = new ArrayList<>();
-        ErrorExceptionsList = new ArrayList<>();
-        ProjectsNamesList = new ArrayList<>();
-        TotalProjectsNumber = 0;
+        sourceCodeFiles = new ArrayList<>();
+        errorExceptionsList = new ArrayList<>();
+        projectsNamesList = new ArrayList<>();
+        totalProjectsNumber = 0;
     }
     /**
      * Reads folder with projects
@@ -74,10 +74,10 @@ public class ArchiveOperator {
      * @param archivePath path to folder with projects
      */
     public boolean readArchive(String archivePath) {
-        ErrorExceptionsList.clear();
-        SourceFilesList.clear();
-        ProjectsNamesList.clear();
-        TotalProjectsNumber = 0;
+        errorExceptionsList.clear();
+        sourceCodeFiles.clear();
+        projectsNamesList.clear();
+        totalProjectsNumber = 0;
         boolean result = false;
 
         if(archivePath.contains(".zip")) {
@@ -85,7 +85,7 @@ public class ArchiveOperator {
             File[] listOfFiles = folder.listFiles();
 
             for (File file : listOfFiles) {
-                TotalProjectsNumber++;
+                totalProjectsNumber++;
                 File inFolder = new File(file.getPath());
                 File[] inListOfFiles = inFolder.listFiles();
                 for (File inFile : inListOfFiles) {
@@ -93,10 +93,10 @@ public class ArchiveOperator {
                         if (inFile.getName().contains(".zip")) {
                             exploreZip(inFile.getPath());
                         } else {
-                            ErrorExceptionsList.add(new WrongFileExtensionException(inFile));
+                            errorExceptionsList.add(new WrongFileExtensionException(inFile));
                         }
                     } catch (Exception e) {
-                        ErrorExceptionsList.add(new WrongFileExtensionException(e.getMessage()));
+                        errorExceptionsList.add(new WrongFileExtensionException(e.getMessage()));
                     }
                 }
             }
@@ -106,7 +106,6 @@ public class ArchiveOperator {
 
         return result;
     }
-
     /**
      * Gets report of errors during reading the directory
      * @return String representation of errors from reading the directory
@@ -115,8 +114,8 @@ public class ArchiveOperator {
         String result = "";
 
         result += "Error report.\n";
-        if(ErrorExceptionsList.size() > 0) {
-            for (Exception exception : ErrorExceptionsList) {
+        if(errorExceptionsList.size() > 0) {
+            for (Exception exception : errorExceptionsList) {
                 result += "Error: " + exception.getMessage() + "\n";
             }
         } else {
@@ -133,12 +132,12 @@ public class ArchiveOperator {
         String result = "";
 
         result += "Projects in directory: \n";
-        for (String projectName : ProjectsNamesList){
+        for (String projectName : projectsNamesList){
             result += "\t- " + projectName + "\n";
         }
-        result += "Total projects number: " + TotalProjectsNumber + "\n";
-        result += "Validated projects number: " + ProjectsNamesList.size() + "\n";
-        result += "Error projects number: " + ErrorExceptionsList.size() + "\n";
+        result += "Total projects number: " + totalProjectsNumber + "\n";
+        result += "Validated projects number: " + projectsNamesList.size() + "\n";
+        result += "Error projects number: " + errorExceptionsList.size() + "\n";
 
         return result;
     }
@@ -146,6 +145,12 @@ public class ArchiveOperator {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Private methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Unzips ZIP archive to directory with the same name as archive name
+     * @param pathToDirectory path to ZIP archive
+     * @return path of unzipped directory
+     */
     private String unZipDirectory(String pathToDirectory){
         String result = "";
 
@@ -190,7 +195,7 @@ public class ArchiveOperator {
             if (entry.isDirectory()) {
                 if(folderNumber == 1) {
                     projectName = extractProjectName(entry.getName());
-                    ProjectsNamesList.add(projectName);
+                    projectsNamesList.add(projectName);
                 }
                 folderNumber++;
             } else if (!entry.isDirectory() && entry.getName().endsWith(".java")) {
@@ -223,7 +228,7 @@ public class ArchiveOperator {
             lineIndex++;
         }
 
-        SourceFilesList.add(sourceFile);
+        sourceCodeFiles.add(sourceFile);
     }
 
     /**

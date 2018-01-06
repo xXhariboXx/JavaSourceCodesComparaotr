@@ -18,35 +18,36 @@ public class SourceComparator {
     /**
      * All java source files to compare
      */
-    private List<SourceCodeFile> SourceFilesToCompareList;
+    private List<SourceCodeFile> sourceFilesToCompareList;
     /**
      * List of result data from comparison
      */
-    private List<ResultData> ResultDataList;
+    private List<ResultData> resultDataList;
     /**
-     *
+     * Minimum
      */
-    private double MinimumSimilarityPercentage;
+    private double minimumSimilarityPercentage;
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Getters and setters
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public List<SourceCodeFile> getSourceFilesToCompareList() {
-        return SourceFilesToCompareList;
+        return sourceFilesToCompareList;
     }
     public void setSourceFilesToCompareList(List<SourceCodeFile> sourceFilesToCompareList) {
-        this.SourceFilesToCompareList = sourceFilesToCompareList;
+        this.sourceFilesToCompareList = sourceFilesToCompareList;
     }
     public double getMinimumSimilarityPercentage() {
-        return MinimumSimilarityPercentage;
+        return minimumSimilarityPercentage;
     }
     public void setMinimumSimilarityPercentage(double minimumSimilarityPercentage) {
-        MinimumSimilarityPercentage = minimumSimilarityPercentage;
+        this.minimumSimilarityPercentage = minimumSimilarityPercentage;
     }
     public void setMinimumSimilarityPercentage(String minimumSimilarityPercentage) {
         try{
-            MinimumSimilarityPercentage = Double.parseDouble(minimumSimilarityPercentage);
+            this.minimumSimilarityPercentage = Double.parseDouble(minimumSimilarityPercentage);
         } catch(Exception e){
-            MinimumSimilarityPercentage = 10.0;
+            this.minimumSimilarityPercentage = 10.0;
         }
 
     }
@@ -58,9 +59,9 @@ public class SourceComparator {
      * Empty constructor. Initializes object
      */
     public SourceComparator(){
-        SourceFilesToCompareList = new ArrayList<>();
-        ResultDataList = new ArrayList<>();
-        MinimumSimilarityPercentage = 10.0;
+        sourceFilesToCompareList = new ArrayList<>();
+        resultDataList = new ArrayList<>();
+        minimumSimilarityPercentage = 10.0;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,15 +71,15 @@ public class SourceComparator {
      * Compare all files with all source lines
      */
     public void compareAllFiles(boolean compareInProject, boolean compareTheSameAuthor){
-        for(SourceCodeFile sourceFile : SourceFilesToCompareList){
+        for(SourceCodeFile sourceFile : sourceFilesToCompareList){
             compareFileWithOthers(sourceFile, compareInProject, compareTheSameAuthor);
         }
         clearGarbage();
     }
 
     public void clearComparatorData(){
-        SourceFilesToCompareList.clear();
-        ResultDataList.clear();
+        sourceFilesToCompareList.clear();
+        resultDataList.clear();
     }
 
     /**
@@ -88,7 +89,7 @@ public class SourceComparator {
     public String getTotalResultString() {
         String result = "";
 
-        for(ResultData resultData : ResultDataList){
+        for(ResultData resultData : resultDataList){
             resultData.findLongestLineLength();
             result += resultData.toString() + "\n";
         }
@@ -105,22 +106,22 @@ public class SourceComparator {
      */
     private void compareFileWithOthers(SourceCodeFile originSourceCodeFile, boolean compareInProject, boolean compareTheSameAuthor){
         ResultData resultData = new ResultData();
-        resultData.OriginSource = originSourceCodeFile.getSourceFileInfo();
+        resultData.originSource = originSourceCodeFile.getSourceFileInfo();
 
-        for(SourceCodeFile sourceFile : SourceFilesToCompareList){
+        for(SourceCodeFile sourceFile : sourceFilesToCompareList){
             if((!areSourcesFromTheSameProject(originSourceCodeFile, sourceFile) || compareInProject) &&
                     !areSourcesTheSameVersion(originSourceCodeFile, sourceFile) &&
                     (!originSourceCodeFile.getSourceFileInfo().AuthorName.equals(sourceFile.getSourceFileInfo().AuthorName) || compareTheSameAuthor)){
 
                 List<MatchedLine> matchingLines = compareCodeFiles(originSourceCodeFile, sourceFile);
                 if(matchingLines.size() > 0) {
-                    resultData.MatchingLinesMap.put(sourceFile.getSourceFileInfo(), matchingLines);
+                    resultData.matchingLinesMap.put(sourceFile.getSourceFileInfo(), matchingLines);
                     resultData.calculateNumericalResultData(originSourceCodeFile, sourceFile);
                 }
             }
         }
 
-        ResultDataList.add(resultData);
+        resultDataList.add(resultData);
     }
 
     private boolean areSourcesTheSame(SourceCodeFile originSourceCodeFile, SourceCodeFile sourceCodeFileToCompare){
@@ -158,14 +159,14 @@ public class SourceComparator {
     private void clearGarbage(){
         ArrayList<ResultData> listToSave = new ArrayList<>();
 
-        for(ResultData resultData : ResultDataList){
+        for(ResultData resultData : resultDataList){
             resultData.clearGarbageResults();
-            if(resultData.haveMatchingLines() && resultData.iSimilar(MinimumSimilarityPercentage)){
+            if(resultData.haveMatchingLines() && resultData.iSimilar(minimumSimilarityPercentage)){
                 listToSave.add(resultData);
             }
         }
 
-        ResultDataList.clear();
-        ResultDataList.addAll(listToSave);
+        resultDataList.clear();
+        resultDataList.addAll(listToSave);
     }
 }

@@ -14,27 +14,30 @@ public class MatchedLine {
     /**
      * Source line number in origin files
      */
-    public Integer OriginLineNumber;
+    public Integer originLineNumber;
     /**
      * Source line number in compared file
      */
-    public Integer ComparedLineNumber;
+    public Integer comparedLineNumber;
     /**
      * Content of source line in both files
      */
-    public String LineContent;
+    public String lineContent;
     /**
      * Length of the longest matched line in file. Used for better representing data in terminal
      */
-    private int LongestLineLength;
+    private int longestLineLength;
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Getters and setters
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public int getLongestLineLength() {
-        return LongestLineLength;
+        return longestLineLength;
+    }
+    public void setLongestLineLength(int longestLineLength) {
+        this.longestLineLength = longestLineLength;
     }
 
-    public void setLongestLineLength(int longestLineLength) {
-        LongestLineLength = longestLineLength;
-    }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructors
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -42,9 +45,9 @@ public class MatchedLine {
      * Empty constructor. Initializes object
      */
     public MatchedLine(){
-        this.OriginLineNumber = -1;
-        this.ComparedLineNumber = -1;
-        this.LineContent = "";
+        this.originLineNumber = -1;
+        this.comparedLineNumber = -1;
+        this.lineContent = "";
     }
     /**
      * Initializes object with data
@@ -53,10 +56,10 @@ public class MatchedLine {
      * @param lineContent content of the line
      */
     public MatchedLine(int originLineNumber, int comparedLineNumber, String lineContent){
-        this.OriginLineNumber = originLineNumber;
-        this.ComparedLineNumber = comparedLineNumber;
-        this.LineContent = lineContent;
-        this.LongestLineLength = 0;
+        this.originLineNumber = originLineNumber;
+        this.comparedLineNumber = comparedLineNumber;
+        this.lineContent = lineContent;
+        this.longestLineLength = 0;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -69,11 +72,11 @@ public class MatchedLine {
     public boolean iSGarbage(){
         boolean bIsGarbage = false;
 
-        while (LineContent.startsWith(" ")){
-            LineContent = LineContent.substring(1);
+        while (lineContent.startsWith(" ")){
+            lineContent = lineContent.substring(1);
         }
 
-        if(LineContent.length() <= 1){
+        if(lineContent.length() <= 1){
             bIsGarbage = true;
         }
 
@@ -87,11 +90,12 @@ public class MatchedLine {
     public String toString() {
         String result = "";
 
-        result += /*"Origin source content: " + */LineContent;
-        while((LineContent.length() + result.length()) < LongestLineLength){
+        result += /*"Origin source content: " + */lineContent;
+        int lineLength = lineContent.length();
+        while(result.length() < longestLineLength){
             result += " ";
         }
-        result += "|Line number in origin file: " + OriginLineNumber.toString() + ", line number in compared file: " + ComparedLineNumber.toString();
+        result += "|Line number in origin file: " + originLineNumber.toString() + ", line number in compared file: " + comparedLineNumber.toString();
 
         return result;
     }
