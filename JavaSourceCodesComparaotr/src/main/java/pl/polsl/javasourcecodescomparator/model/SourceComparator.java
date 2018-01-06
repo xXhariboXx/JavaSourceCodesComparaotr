@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Class that performs files comparison
  * @author Dominik
- * @version 1.0
+ * @version 0.1
  */
 
 
@@ -110,9 +110,7 @@ public class SourceComparator {
         for(SourceCodeFile sourceFile : SourceFilesToCompareList){
             if((!areSourcesFromTheSameProject(originSourceCodeFile, sourceFile) || compareInProject) &&
                     !areSourcesTheSameVersion(originSourceCodeFile, sourceFile) &&
-                    (!originSourceCodeFile.getSourceFileInfo().AuthorName.equals(sourceFile.getSourceFileInfo().AuthorName)
-                            || compareTheSameAuthor)
-                    ){
+                    (!originSourceCodeFile.getSourceFileInfo().AuthorName.equals(sourceFile.getSourceFileInfo().AuthorName) || compareTheSameAuthor)){
 
                 List<MatchedLine> matchingLines = compareCodeFiles(originSourceCodeFile, sourceFile);
                 if(matchingLines.size() > 0) {
