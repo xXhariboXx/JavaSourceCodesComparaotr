@@ -217,8 +217,8 @@ public class ArchiveOperator {
         String currentLine;
 
         SourceFileInfo sourceFileInfo = new SourceFileInfo();
-        sourceFileInfo.ProjectName = projectName;
-        sourceFileInfo.FileName = sourceFileName;
+        sourceFileInfo.projectName = projectName;
+        sourceFileInfo.fileName = sourceFileName;
 
         sourceFile.setSourceFileInfo(sourceFileInfo);
 

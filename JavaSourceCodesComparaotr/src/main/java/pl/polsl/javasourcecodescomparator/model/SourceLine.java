@@ -4,7 +4,7 @@ package pl.polsl.javasourcecodescomparator.model;
  * Class that represents source line and its information
  *
  * @author Dominik Rączka
- * @version 0.9
+ * @version 1.0
  */
 public class SourceLine {
 
@@ -14,19 +14,19 @@ public class SourceLine {
     /**
      * Content of source line
      */
-    public String SourceLineContent;
+    public String sourceLineContent;
     /**
      * Content of processed lines - only important data
      */
-    public String ProcessedLineContent;
+    public String processedLineContent;
     /**
      * Index of source line
      */
-    public int SourceLineIndex;
+    public int sourceLineIndex;
     /**
      * True if source line was matched by comparator
      */
-    public  boolean WasSourceLineMatched;
+    public  boolean wasSourceLineMatched;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructors
@@ -37,52 +37,56 @@ public class SourceLine {
      * @param sourceLineIndex index of source line to create
      */
     public  SourceLine(String sourceLineContent, int sourceLineIndex){
-        this.SourceLineContent = sourceLineContent;
-        this.SourceLineIndex = sourceLineIndex;
-        this.WasSourceLineMatched = false;
+        this.sourceLineContent = sourceLineContent;
+        this.sourceLineIndex = sourceLineIndex;
+        this.wasSourceLineMatched = false;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Public methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Process source line.
+     * @return Returns true if source line is valuable
+     */
     public boolean processSourceLine(){
-        if(SourceLineContent.contains("{")) {
-            SourceLineContent = SourceLineContent.replaceAll("\\{", "");
+        if(sourceLineContent.contains("{")) {
+            sourceLineContent = sourceLineContent.replaceAll("\\{", "");
         }
-        if(SourceLineContent.contains("}")) {
-            SourceLineContent = SourceLineContent.replaceAll("}", "");
+        if(sourceLineContent.contains("}")) {
+            sourceLineContent = sourceLineContent.replaceAll("}", "");
         }
-        if(SourceLineContent.contains("\t")) {
-            SourceLineContent = SourceLineContent.replaceAll("\t", "");
-        }
-
-        while(SourceLineContent.startsWith(" ")){
-            SourceLineContent = SourceLineContent.substring(1);
+        if(sourceLineContent.contains("\t")) {
+            sourceLineContent = sourceLineContent.replaceAll("\t", "");
         }
 
-        ProcessedLineContent = SourceLineContent;
-        ProcessedLineContent.toLowerCase();
+        while(sourceLineContent.startsWith(" ")){
+            sourceLineContent = sourceLineContent.substring(1);
+        }
 
-        if(ProcessedLineContent.contains("break")) {
-            ProcessedLineContent = ProcessedLineContent.replaceAll("break;", "");
+        processedLineContent = sourceLineContent;
+        processedLineContent.toLowerCase();
+
+        if(processedLineContent.contains("break")) {
+            processedLineContent = processedLineContent.replaceAll("break;", "");
         }
-        if(ProcessedLineContent.contains("return")) {
-            ProcessedLineContent = ProcessedLineContent.replaceAll("return;", "");
+        if(processedLineContent.contains("return")) {
+            processedLineContent = processedLineContent.replaceAll("return;", "");
         }
-        if(ProcessedLineContent.contains("@author")){
-            ProcessedLineContent = ProcessedLineContent.replaceAll("@author", "");
+        if(processedLineContent.contains("@author")){
+            processedLineContent = processedLineContent.replaceAll("@author", "");
         }
-        if(ProcessedLineContent.contains("@test")){
-            ProcessedLineContent = ProcessedLineContent.replaceAll("@test", "");
+        if(processedLineContent.contains("@test")){
+            processedLineContent = processedLineContent.replaceAll("@test", "");
         }
-        if(ProcessedLineContent.contains("@override")){
-            ProcessedLineContent = ProcessedLineContent.replaceAll("@Override", "");
+        if(processedLineContent.contains("@override")){
+            processedLineContent = processedLineContent.replaceAll("@Override", "");
         }
-        if(ProcessedLineContent.contains("try")){
-            ProcessedLineContent = ProcessedLineContent.replaceAll("try", "");
+        if(processedLineContent.contains("try")){
+            processedLineContent = processedLineContent.replaceAll("try", "");
         }
-        if(ProcessedLineContent.contains("else")){
-            ProcessedLineContent = ProcessedLineContent.replaceAll("else", "");
+        if(processedLineContent.contains("else")){
+            processedLineContent = processedLineContent.replaceAll("else", "");
         }
 
         return  validateSourceLine();
@@ -91,27 +95,30 @@ public class SourceLine {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Private methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+    /**
+     * Validates if source line has any source
+     * @return tru if have any source
+     */
     private boolean validateSourceLine(){
         boolean result = true;
 
-        if(ProcessedLineContent.length() == 0){
+        if(processedLineContent.length() == 0){
             result = false;
-        } else if(ProcessedLineContent.startsWith("//")){
+        } else if(processedLineContent.startsWith("//")){
             result = false;
-        } else if(ProcessedLineContent.startsWith("/**")){
+        } else if(processedLineContent.startsWith("/**")){
             result = false;
-        } else if(ProcessedLineContent.startsWith("/*")){
+        } else if(processedLineContent.startsWith("/*")){
             result = false;
-        } else if(ProcessedLineContent.startsWith("*/")){
+        } else if(processedLineContent.startsWith("*/")){
             result = false;
-        } else if (ProcessedLineContent.startsWith("*")){
+        } else if (processedLineContent.startsWith("*")){
             result = false;
-        } else if(ProcessedLineContent.contains("import")) {
+        } else if(processedLineContent.contains("import")) {
             result = false;
-        } else if(ProcessedLineContent.contains("package")) {
+        } else if(processedLineContent.contains("package")) {
             result = false;
-        } else if(ProcessedLineContent.length() == 1 && ProcessedLineContent.equals(";")){
+        } else if(processedLineContent.length() == 1 && processedLineContent.equals(";")){
             result = false;
         }
 

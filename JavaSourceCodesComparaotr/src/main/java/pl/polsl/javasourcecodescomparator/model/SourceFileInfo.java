@@ -10,19 +10,19 @@ public class SourceFileInfo {
     /**
      * Name of source file
      */
-    public String FileName;
+    public String fileName;
     /**
      * Name of author of the source file
      */
-    public String AuthorName;
+    public String authorName;
     /**
-     * Version of source file
+     * version of source file
      */
-    public String Version;
+    public String version;
     /**
      * Project name of source file
      */
-    public String ProjectName;
+    public String projectName;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructors
@@ -31,10 +31,10 @@ public class SourceFileInfo {
      * Empty constructor. Initializes object
      */
     public SourceFileInfo(){
-        FileName = "none";
-        AuthorName = "none";
-        Version = "none";
-        ProjectName = "none";
+        fileName = "none";
+        authorName = "none";
+        version = "none";
+        projectName = "none";
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,8 +44,8 @@ public class SourceFileInfo {
     public String toString() {
         String result = "";
 
-        result += "Project name: " + ProjectName + "\n";
-        result += "File name: " + FileName + ", Author name: " + AuthorName + ", version: " + Version;
+        result += "Project name: " + projectName + "\n";
+        result += "File name: " + fileName + ", Author name: " + authorName + ", version: " + version;
 
         return result;
     }
@@ -56,10 +56,10 @@ public class SourceFileInfo {
 
         if(((SourceFileInfo) obj) != null){
             SourceFileInfo objToCompare = (SourceFileInfo) obj;
-            result = objToCompare.AuthorName.equals(AuthorName) &&
-                    objToCompare.FileName.equals(FileName) &&
-                    objToCompare.Version.equals(Version) &&
-                    objToCompare.ProjectName.equals(ProjectName);
+            result = objToCompare.authorName.equals(authorName) &&
+                    objToCompare.fileName.equals(fileName) &&
+                    objToCompare.version.equals(version) &&
+                    objToCompare.projectName.equals(projectName);
         }
 
         return result;

@@ -7,7 +7,7 @@ import java.util.List;
  * Class to hold source files data
  *
  * @author Dominik Rączka
- * @version 0.9
+ * @version 1.0
  */
 public class SourceCodeFile {
 
@@ -81,7 +81,7 @@ public class SourceCodeFile {
         SourceLinesList = new ArrayList<>(listToInitialize);
 
         for(SourceLine sourceLine : listToInitialize) {
-            parseInfo(sourceLine.SourceLineContent);
+            parseInfo(sourceLine.sourceLineContent);
         }
 
         LinesNumber = SourceLinesList.size();
@@ -95,7 +95,7 @@ public class SourceCodeFile {
      * @param sourceLine
      */
     public void addSourceLine(SourceLine sourceLine){
-        parseInfo(sourceLine.SourceLineContent);
+        parseInfo(sourceLine.sourceLineContent);
         if(sourceLine.processSourceLine()){
             SourceLinesList.add(sourceLine);
         }
@@ -113,7 +113,7 @@ public class SourceCodeFile {
     public String toString() {
         String result = "";
         for(SourceLine sourceLine : SourceLinesList){
-            result += sourceLine.SourceLineContent + "\n";
+            result += sourceLine.sourceLineContent + "\n";
         }
 
         return result;
@@ -127,10 +127,10 @@ public class SourceCodeFile {
      * @param lineToParse line of code to parse
      */
     private void parseInfo(String lineToParse){
-        if(SourceFileInfo.AuthorName.equals("none") && lineToParse.contains(AUTHORDELIMETER)){
-            SourceFileInfo.AuthorName = lineToParse.substring(lineToParse.indexOf(AUTHORDELIMETER) + AUTHORDELIMETER.length() + 1);
-        } else if(SourceFileInfo.Version.equals("none") && lineToParse.contains(VERSIONDELIMETER)){
-            SourceFileInfo.Version = lineToParse.substring(lineToParse.indexOf(VERSIONDELIMETER) + VERSIONDELIMETER.length() + 1);
+        if(SourceFileInfo.authorName.equals("none") && lineToParse.contains(AUTHORDELIMETER)){
+            SourceFileInfo.authorName = lineToParse.substring(lineToParse.indexOf(AUTHORDELIMETER) + AUTHORDELIMETER.length() + 1);
+        } else if(SourceFileInfo.version.equals("none") && lineToParse.contains(VERSIONDELIMETER)){
+            SourceFileInfo.version = lineToParse.substring(lineToParse.indexOf(VERSIONDELIMETER) + VERSIONDELIMETER.length() + 1);
         }
     }
 }

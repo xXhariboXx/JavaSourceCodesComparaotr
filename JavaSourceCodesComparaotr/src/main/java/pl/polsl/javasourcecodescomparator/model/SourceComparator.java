@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Class that performs files comparison
  * @author Dominik
- * @version 0.1
+ * @version 1.0
  */
 
 
@@ -76,12 +76,13 @@ public class SourceComparator {
         }
         clearGarbage();
     }
-
+    /**
+     * Clears data in comparator
+     */
     public void clearComparatorData(){
         sourceFilesToCompareList.clear();
         resultDataList.clear();
     }
-
     /**
      * Converts all result data from SourceComparator to String
      * @return SourceComparator converted to String
@@ -111,7 +112,7 @@ public class SourceComparator {
         for(SourceCodeFile sourceFile : sourceFilesToCompareList){
             if((!areSourcesFromTheSameProject(originSourceCodeFile, sourceFile) || compareInProject) &&
                     !areSourcesTheSameVersion(originSourceCodeFile, sourceFile) &&
-                    (!originSourceCodeFile.getSourceFileInfo().AuthorName.equals(sourceFile.getSourceFileInfo().AuthorName) || compareTheSameAuthor)){
+                    (!originSourceCodeFile.getSourceFileInfo().authorName.equals(sourceFile.getSourceFileInfo().authorName) || compareTheSameAuthor)){
 
                 List<MatchedLine> matchingLines = compareCodeFiles(originSourceCodeFile, sourceFile);
                 if(matchingLines.size() > 0) {
@@ -129,24 +130,29 @@ public class SourceComparator {
     }
 
     private  boolean areSourcesFromTheSameProject(SourceCodeFile originSourceCodeFile, SourceCodeFile sourceCodeFileToCompare){
-        boolean result = originSourceCodeFile.getSourceFileInfo().ProjectName.equals(sourceCodeFileToCompare.getSourceFileInfo().ProjectName);
+        boolean result = originSourceCodeFile.getSourceFileInfo().projectName.equals(sourceCodeFileToCompare.getSourceFileInfo().projectName);
         return result;
     }
 
     private  boolean areSourcesTheSameVersion(SourceCodeFile originSourceCodeFile, SourceCodeFile sourceCodeFileToCompare){
-        return originSourceCodeFile.getSourceFileInfo().AuthorName.equals(sourceCodeFileToCompare.getSourceFileInfo().AuthorName) &&
-                originSourceCodeFile.getSourceFileInfo().Version.equals(sourceCodeFileToCompare.getSourceFileInfo().Version);
+        return originSourceCodeFile.getSourceFileInfo().authorName.equals(sourceCodeFileToCompare.getSourceFileInfo().authorName) &&
+                originSourceCodeFile.getSourceFileInfo().version.equals(sourceCodeFileToCompare.getSourceFileInfo().version);
     }
-
+    /**
+     * Compare two code files
+     * @param originSource source code file labeled as origin
+     * @param sourceToCompare source file to compare to origin
+     * @return list of matched line in both files
+     */
     private List<MatchedLine> compareCodeFiles(SourceCodeFile originSource, SourceCodeFile sourceToCompare){
         List<MatchedLine> resultList = new ArrayList<>();
 
         for(SourceLine originSourceLine : originSource.getSourceLinesList()){
             for(SourceLine sourceLineToCompare : sourceToCompare.getSourceLinesList()){
-                if (!sourceLineToCompare.WasSourceLineMatched ) {
-                    if (originSourceLine.SourceLineContent.equals(sourceLineToCompare.SourceLineContent)) {
-                        sourceLineToCompare.WasSourceLineMatched = true;
-                        resultList.add(new MatchedLine(originSourceLine.SourceLineIndex, sourceLineToCompare.SourceLineIndex, originSourceLine.SourceLineContent));
+                if (!sourceLineToCompare.wasSourceLineMatched) {
+                    if (originSourceLine.sourceLineContent.equals(sourceLineToCompare.sourceLineContent)) {
+                        sourceLineToCompare.wasSourceLineMatched = true;
+                        resultList.add(new MatchedLine(originSourceLine.sourceLineIndex, sourceLineToCompare.sourceLineIndex, originSourceLine.sourceLineContent));
                         break;
                     }
                 }
@@ -155,7 +161,9 @@ public class SourceComparator {
 
         return  resultList;
     }
-
+    /**
+     * Clears garbage results. Lower similarity percentage than minimum similarity percentage
+     */
     private void clearGarbage(){
         ArrayList<ResultData> listToSave = new ArrayList<>();
 

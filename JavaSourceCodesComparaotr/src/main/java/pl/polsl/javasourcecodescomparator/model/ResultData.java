@@ -225,7 +225,6 @@ public class ResultData {
 
         return nonGarbageLines;
     }
-
     /**
      * Clears accuracy data that are less similar than similarityPercentage
      * @param similarityPercentage minimum percentage to call files similar
@@ -246,7 +245,11 @@ public class ResultData {
         }
         synchronizeMaps();
     }
-
+    /**
+     * Sorts results in maps from most similar
+     * @param mapToSort map to sort values
+     * @return sorted map
+     */
     private LinkedHashMap sortByValues(Map mapToSort) {
         List list = new LinkedList(mapToSort.entrySet());
 
@@ -264,7 +267,9 @@ public class ResultData {
         }
         return sortedHashMap;
     }
-
+    /**
+     * Synchronize order in accuracy and matched lines map
+     */
     private void synchronizeMaps(){
         Map<SourceFileInfo, List<MatchedLine>> finalMatchedLinesResults = new LinkedHashMap<>();
 

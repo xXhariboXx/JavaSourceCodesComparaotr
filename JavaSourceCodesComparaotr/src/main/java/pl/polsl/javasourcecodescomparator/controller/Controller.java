@@ -146,7 +146,7 @@ public class Controller {
                         options[1]);
 
                     printExceptions();
-                    
+
                 if (n == JOptionPane.NO_OPTION) {
                     System.exit(0);
                 }
