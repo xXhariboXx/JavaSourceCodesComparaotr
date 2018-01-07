@@ -125,7 +125,6 @@ public class Controller {
         if (!directoryPath.equals("none")) {
             sourceComparator.clearComparatorData();
             if(archiveOperator.readArchive(pathToDirectory)) {
-                printExceptions();
                 System.out.println(archiveOperator.getProjectsNamesString());
                 System.out.println(archiveOperator.getErrorMessagesReport());
 
@@ -145,6 +144,9 @@ public class Controller {
                         null,
                         options,
                         options[1]);
+
+                    printExceptions();
+                    
                 if (n == JOptionPane.NO_OPTION) {
                     System.exit(0);
                 }
@@ -166,7 +168,9 @@ public class Controller {
         if(!archiveOperator.getErrorMessagesReport().isEmpty()) {
             exceptionsString = archiveOperator.getErrorMessagesReport();
         }
-        JOptionPane.showMessageDialog(mainFrame, exceptionsString);
+        exceptionsString += "Press OK to continue";
+
+        JOptionPane.showMessageDialog(mainFrame, exceptionsString, "Reading input file report", 1);
     }
     /**
      * Print final comparison report

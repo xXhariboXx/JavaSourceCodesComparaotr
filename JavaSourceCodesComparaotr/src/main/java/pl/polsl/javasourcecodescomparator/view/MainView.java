@@ -58,11 +58,6 @@ public class MainView {
         mainPanel.setLayout(new GridLayoutManager(14, 4, new Insets(0, 0, 0, 0), -1, -1));
         fileChooser = new JFileChooser();
         mainPanel.add(fileChooser, new GridConstraints(0, 0, 14, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(720, 720), null, 0, false));
-        similarityPercentageLabel = new JLabel();
-        similarityPercentageLabel.setHorizontalAlignment(0);
-        similarityPercentageLabel.setHorizontalTextPosition(0);
-        similarityPercentageLabel.setText("Minimalna % zgodność plików");
-        mainPanel.add(similarityPercentageLabel, new GridConstraints(2, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         similarityPercentageTextField = new JTextField();
         mainPanel.add(similarityPercentageTextField, new GridConstraints(3, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final Spacer spacer1 = new Spacer();
@@ -76,6 +71,11 @@ public class MainView {
         sameProjectCheckBox = new JCheckBox();
         sameProjectCheckBox.setText("Porównywanie plików wewnątrz projektu");
         mainPanel.add(sameProjectCheckBox, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        similarityPercentageLabel = new JLabel();
+        similarityPercentageLabel.setHorizontalAlignment(0);
+        similarityPercentageLabel.setHorizontalTextPosition(0);
+        similarityPercentageLabel.setText("Minimalna % zgodność plików");
+        mainPanel.add(similarityPercentageLabel, new GridConstraints(2, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

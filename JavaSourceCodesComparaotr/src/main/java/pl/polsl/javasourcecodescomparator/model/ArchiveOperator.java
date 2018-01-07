@@ -113,7 +113,7 @@ public class ArchiveOperator {
     public String getErrorMessagesReport(){
         String result = "";
 
-        result += "Error report.\n";
+        result += "Archive file reading errors report.\n";
         if(errorExceptionsList.size() > 0) {
             for (Exception exception : errorExceptionsList) {
                 result += "Error: " + exception.getMessage() + "\n";
